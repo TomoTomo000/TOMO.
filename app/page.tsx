@@ -436,7 +436,7 @@ export default function Home() {
                     お名前
                   </label>
                   <input
-                    className="h-14 w-full rounded-lg border border-foreground/20 bg-white/40 px-5 text-base font-normal outline-none transition focus:border-foreground/70"
+                    className="w-full rounded-lg border border-foreground/20 bg-white/40 p-3 text-sm font-normal outline-none transition focus:border-foreground/70"
                     id="name"
                     name="name"
                     placeholder="例）山田 太郎"
@@ -449,7 +449,7 @@ export default function Home() {
                     メールアドレス
                   </label>
                   <input
-                    className="h-14 w-full rounded-lg border border-foreground/20 bg-white/40 px-5 text-base font-normal outline-none transition focus:border-foreground/70"
+                    className="w-full rounded-lg border border-foreground/20 bg-white/40 p-3 text-sm font-normal outline-none transition focus:border-foreground/70"
                     id="email"
                     name="email"
                     placeholder="例）tomo@example.com"
@@ -461,21 +461,37 @@ export default function Home() {
                   <label className="text-base font-bold" htmlFor="budget">
                     ご予算
                   </label>
-                  <select
-                    className="h-14 w-full rounded-lg border border-foreground/20 bg-white/40 px-5 text-base font-normal text-muted outline-none transition focus:border-foreground/70"
-                    id="budget"
-                    name="budget"
-                    defaultValue=""
-                  >
-                    <option value="" disabled>
-                      選択してください
-                    </option>
-                    <option value="under-100000">〜10万円</option>
-                    <option value="100000-300000">10〜30万円</option>
-                    <option value="300000-500000">30〜50万円</option>
-                    <option value="over-500000">50万円〜</option>
-                    <option value="undecided">未定・相談したい</option>
-                  </select>
+                  <div className="relative">
+                    <select
+                      className="w-full appearance-none rounded-lg border border-foreground/20 bg-white/40 py-3 pl-3 pr-9 text-sm font-normal text-muted outline-none transition focus:border-foreground/70"
+                      id="budget"
+                      name="budget"
+                      defaultValue=""
+                    >
+                      <option value="" disabled>
+                        選択してください
+                      </option>
+                      <option value="under-100000">〜10万円</option>
+                      <option value="100000-300000">10〜30万円</option>
+                      <option value="300000-500000">30〜50万円</option>
+                      <option value="over-500000">50万円〜</option>
+                      <option value="undecided">未定・相談したい</option>
+                    </select>
+                    <svg
+                      aria-hidden="true"
+                      className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-foreground/60"
+                      viewBox="0 0 16 16"
+                      fill="none"
+                    >
+                      <path
+                        d="m4 6 4 4 4-4"
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="1.5"
+                      />
+                    </svg>
+                  </div>
                 </div>
 
                 <div className="grid gap-3 lg:grid-cols-[10rem_1fr] lg:gap-8">
@@ -483,7 +499,7 @@ export default function Home() {
                     お問い合わせ内容
                   </label>
                   <textarea
-                    className="min-h-44 w-full resize-y rounded-lg border border-foreground/20 bg-white/40 px-5 py-4 text-base font-normal leading-8 outline-none transition focus:border-foreground/70"
+                    className="min-h-44 w-full resize-y rounded-lg border border-foreground/20 bg-white/40 p-3 text-sm font-normal leading-8 outline-none transition focus:border-foreground/70"
                     id="message"
                     name="message"
                     placeholder="ご相談内容やご依頼の概要をご記入ください"
