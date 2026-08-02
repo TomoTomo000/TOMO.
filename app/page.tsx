@@ -245,13 +245,6 @@ export default function Home() {
                 <br />
                 through code and design.
               </p>
-              <a
-                className="mt-9 inline-flex items-center border-b border-current pb-1 text-sm font-bold leading-none transition-opacity hover:opacity-55 lg:mt-10 lg:text-base"
-                href="#about"
-                onClick={(event) => handleNavClick(event, "about")}
-              >
-                View About
-              </a>
             </div>
 
             <div
