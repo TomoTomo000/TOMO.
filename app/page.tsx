@@ -78,6 +78,7 @@ const notesPosts = [
 export default function Home() {
   const panelRef = useRef<HTMLElement>(null);
   const [activeSection, setActiveSection] = useState("home");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     const panel = panelRef.current;
@@ -133,22 +134,92 @@ export default function Home() {
   };
 
   return (
-    <div className="relative h-screen overflow-hidden bg-background px-4 py-4 text-foreground sm:px-6 sm:py-6 lg:px-8 lg:py-7">
+    <div className="relative h-screen overflow-hidden bg-background bg-[radial-gradient(circle_at_8%_12%,rgb(255_255_255/0.72),transparent_25%),radial-gradient(circle_at_88%_86%,rgb(224_210_202/0.58),transparent_30%)] px-3 py-3 text-foreground selection:bg-foreground/15 sm:px-6 sm:py-6 lg:px-8 lg:py-7">
       <header
-        className="absolute left-6 top-6 z-20 text-2xl font-bold leading-none sm:left-8 sm:top-8 lg:left-10 lg:top-10 lg:text-3xl"
-        aria-label="TOMO"
+        className="absolute left-3 right-3 top-3 z-20 rounded-t-[1.75rem] border-b border-foreground/10 bg-[#faf8f6]/90 px-6 py-5 text-lg font-bold leading-none shadow-[0_12px_30px_rgba(72,54,44,0.06)] backdrop-blur-md sm:left-6 sm:right-6 sm:top-6 sm:rounded-t-3xl sm:px-8 sm:text-xl lg:left-10 lg:right-auto lg:top-10 lg:rounded-none lg:border-0 lg:bg-transparent lg:p-0 lg:text-3xl lg:shadow-none lg:backdrop-blur-none"
       >
-        TOMO.
+        <div className="flex items-center justify-between lg:block">
+          <span>TOMO.</span>
+          <button
+            className="grid size-8 place-items-center lg:hidden"
+            type="button"
+            aria-label={isMenuOpen ? "メニューを閉じる" : "メニューを開く"}
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-navigation"
+            onClick={() => setIsMenuOpen((isOpen) => !isOpen)}
+          >
+            <span className="relative block h-4 w-6" aria-hidden="true">
+              <span
+                className={`absolute inset-x-0 top-1/2 block h-px w-full origin-center bg-current transition-transform ${
+                  isMenuOpen
+                    ? "-translate-y-1/2 rotate-45"
+                    : "-translate-y-[5px]"
+                }`}
+              />
+              <span
+                className={`absolute inset-x-0 top-1/2 block h-px w-full -translate-y-1/2 bg-current transition-opacity ${
+                  isMenuOpen ? "opacity-0" : "opacity-100"
+                }`}
+              />
+              <span
+                className={`absolute inset-x-0 top-1/2 block h-px w-full origin-center bg-current transition-transform ${
+                  isMenuOpen
+                    ? "-translate-y-1/2 -rotate-45"
+                    : "translate-y-[4px]"
+                }`}
+              />
+            </span>
+          </button>
+        </div>
+
+        {isMenuOpen ? (
+          <nav
+            id="mobile-navigation"
+            className="mt-5 border-t border-foreground/10 pt-3 lg:hidden"
+            aria-label="Mobile primary navigation"
+          >
+            <ul className="grid">
+              {navItems.map((item) => (
+                <li key={item.id}>
+                  <a
+                    className={`grid grid-cols-[2rem_0.5rem_1fr] items-center gap-3 rounded-xl px-2 py-3 text-sm transition-colors ${
+                      activeSection === item.id ? "bg-foreground/5" : ""
+                    }`}
+                    href={`#${item.id}`}
+                    onClick={(event) => {
+                      handleNavClick(event, item.id);
+                      setIsMenuOpen(false);
+                    }}
+                    aria-current={
+                      activeSection === item.id ? "location" : undefined
+                    }
+                  >
+                    <span className="text-xs font-normal">{item.number}</span>
+                    <span
+                      className={`block size-1.5 rounded-full ${
+                        activeSection === item.id
+                          ? "bg-foreground"
+                          : "bg-foreground/20"
+                      }`}
+                      aria-hidden="true"
+                    />
+                    <span>{item.label}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ) : null}
       </header>
 
       <main
         ref={panelRef}
-        className="relative mx-auto h-[calc(100vh-2rem)] w-full max-w-7xl overflow-y-auto rounded-3xl bg-surface shadow-lg sm:h-[calc(100vh-3rem)] lg:h-[calc(100vh-3.5rem)] lg:w-3/4"
+        className="relative mx-auto h-[calc(100vh-1.5rem)] w-full max-w-7xl overflow-y-auto rounded-[1.75rem] border border-white/70 bg-surface shadow-[0_24px_70px_rgba(72,54,44,0.12)] sm:h-[calc(100vh-3rem)] sm:rounded-3xl lg:h-[calc(100vh-3.5rem)] lg:w-3/4"
       >
         <section
           id="home"
           data-section
-          className="relative grid min-h-full place-items-center px-6 pb-28 pt-24 sm:px-10 lg:px-14 lg:pb-24 lg:pt-16"
+          className="relative grid min-h-full place-items-center px-7 pb-20 pt-24 sm:px-12 lg:px-16 lg:pb-24 lg:pt-16"
           aria-label="Introduction"
         >
           <div className="grid w-full max-w-5xl items-center gap-7 md:grid-cols-2 lg:gap-16">
@@ -161,7 +232,7 @@ export default function Home() {
                 className="mb-5 h-auto w-44 sm:mb-7 sm:w-48"
                 priority
               />
-              <h1 className="text-5xl font-bold leading-tight lg:text-6xl">
+              <h1 className="text-5xl font-bold leading-[1.08] lg:text-6xl">
                 I’m TOMO.
               </h1>
               <p className="mt-5 text-xl font-bold leading-tight lg:text-2xl">
@@ -169,13 +240,13 @@ export default function Home() {
                 <br />
                 Designer
               </p>
-              <p className="mt-5 text-base font-normal leading-8 text-muted lg:mt-6">
+              <p className="mt-5 text-base leading-8 text-muted lg:mt-6">
                 Building thoughtful websites
                 <br />
                 through code and design.
               </p>
               <a
-                className="mt-9 inline-flex items-center border-b border-current pb-1 text-base font-bold leading-none lg:mt-10"
+                className="mt-9 inline-flex items-center border-b border-current pb-1 text-sm font-bold leading-none transition-opacity hover:opacity-55 lg:mt-10 lg:text-base"
                 href="#about"
                 onClick={(event) => handleNavClick(event, "about")}
               >
@@ -205,20 +276,20 @@ export default function Home() {
             <span className="relative block h-14 w-px bg-foreground/40 lg:h-16">
               <span className="animate-scroll-dot absolute left-1/2 top-0 block h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-current" />
             </span>
-            <p className="m-0 text-xs font-normal">Scroll</p>
+            <p className="m-0 text-xs">Scroll</p>
           </div>
         </section>
 
         <section
           id="about"
           data-section
-          className="min-h-full px-6 py-16 sm:px-10 lg:px-16 lg:py-20"
+          className="min-h-full px-7 py-20 sm:px-12 lg:px-16 lg:py-24"
           aria-labelledby="about-title"
         >
           <div className="mx-auto w-full max-w-5xl">
             <div className="grid gap-12 lg:grid-cols-2 lg:gap-0">
               <div className="lg:pr-14">
-                <p className="text-sm font-bold tracking-[0.18em]">ABOUT</p>
+                <p className="text-sm font-bold">ABOUT</p>
                 <h2
                   id="about-title"
                   className="mt-3 text-5xl font-bold leading-none lg:text-6xl"
@@ -226,7 +297,7 @@ export default function Home() {
                   TOMO
                 </h2>
 
-                <div className="mt-9 space-y-6 text-sm font-normal leading-7 sm:text-base sm:leading-8">
+                <div className="mt-9 space-y-6 text-sm leading-7 sm:text-base sm:leading-8">
                   <p>
                     約3年半フレンチレストランに勤務したのち、
                     <br />
@@ -251,7 +322,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="grid place-items-center border-t border-foreground/40 pt-12 lg:border-l lg:border-t-0 lg:pl-14 lg:pt-0">
+              <div className="grid place-items-center border-t border-foreground/20 pt-12 lg:border-l lg:border-t-0 lg:pl-14 lg:pt-0">
                 <Image
                   src="/img/about-profile.png"
                   alt="TOMOのプロフィールイラスト"
@@ -263,7 +334,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="mt-14 border-t border-foreground/40 pt-7">
+            <div className="mt-16 border-t border-foreground/20 pt-8">
               <h3 className="inline-block border-b border-foreground/60 pb-2 text-lg font-bold">
                 好きなもの
               </h3>
@@ -275,7 +346,7 @@ export default function Home() {
                     className={`grid content-start gap-4 ${
                       index === 0
                         ? "sm:pr-8"
-                        : "sm:border-l sm:border-foreground/40 sm:px-8"
+                        : "sm:border-l sm:border-foreground/20 sm:px-8"
                     }`}
                   >
                     <h4 className="text-base font-bold">{favorite.label}</h4>
@@ -297,20 +368,20 @@ export default function Home() {
         <section
           id="notes"
           data-section
-          className="min-h-full px-6 py-16 sm:px-10 lg:px-16 lg:py-20"
+          className="min-h-full px-7 py-20 sm:px-12 lg:px-16 lg:py-24"
           aria-labelledby="notes-title"
         >
           <div className="mx-auto w-full max-w-5xl">
             <div className="grid items-center gap-10 lg:grid-cols-[1fr_0.9fr] lg:gap-16">
               <div>
-                <p className="text-sm font-bold tracking-[0.18em]">NOTES</p>
+                <p className="text-sm font-bold">NOTES</p>
                 <h2
                   id="notes-title"
                   className="mt-3 text-5xl font-bold leading-none lg:text-6xl"
                 >
                   Notes
                 </h2>
-                <p className="mt-8 text-sm font-bold leading-8 sm:text-base sm:leading-9">
+                <p className="mt-8 text-sm leading-8 sm:text-base sm:leading-9">
                   日々の制作で学んだことや、
                   <br />
                   フロントエンド、デザイン、好きなものについて
@@ -330,12 +401,12 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="mt-10 border-t border-foreground/40 pt-7 lg:mt-12">
+            <div className="mt-12 border-t border-foreground/20 pt-8">
               <div className="grid gap-5 lg:grid-cols-2 lg:gap-6">
                 {notesPosts.map((post) => (
                   <article
                     key={`${post.category}-${post.date}`}
-                    className="grid overflow-hidden rounded-lg bg-white/65 shadow-lg ring-1 ring-foreground/5"
+                    className="group grid overflow-hidden rounded-2xl border border-white/80 bg-white/65 shadow-[0_12px_36px_rgba(72,54,44,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_42px_rgba(72,54,44,0.13)]"
                   >
                     <div className="relative aspect-video overflow-hidden bg-background/70">
                       <Image
@@ -343,12 +414,12 @@ export default function Home() {
                         alt=""
                         width={1600}
                         height={900}
-                        className="h-full w-full object-cover"
+                        className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.02]"
                         sizes="(max-width: 639px) 100vw, 10rem"
                       />
                     </div>
 
-                    <div className="grid min-h-64 content-between gap-6 p-5 sm:min-h-60 lg:min-h-64 lg:p-6">
+                    <div className="grid min-h-60 content-between gap-6 p-5 lg:p-6">
                       <div>
                         <div className="mb-4 flex items-start justify-between gap-4 text-xs font-bold leading-none">
                           <span>{post.category}</span>
@@ -359,13 +430,13 @@ export default function Home() {
                         <h3 className="text-lg font-bold leading-8 lg:text-xl lg:leading-9">
                           {post.title}
                         </h3>
-                        <p className="mt-3 text-sm font-normal leading-7">
+                        <p className="mt-3 text-sm leading-7 text-muted">
                           {post.description}
                         </p>
                       </div>
 
                       <a
-                        className="inline-flex text-xs font-bold tracking-[0.12em]"
+                        className="inline-flex w-fit text-xs font-bold transition-opacity hover:opacity-55"
                         href="#notes"
                         aria-label={`${post.title}を読む`}
                       >
@@ -378,7 +449,7 @@ export default function Home() {
 
               <div className="mt-9 flex justify-center lg:mt-10">
                 <a
-                  className="inline-flex text-xs font-bold tracking-[0.12em]"
+                  className="inline-flex border-b border-current pb-1 text-xs font-bold transition-opacity hover:opacity-55"
                   href="#notes"
                 >
                   VIEW ALL NOTES
@@ -391,20 +462,20 @@ export default function Home() {
         <section
           id="contact"
           data-section
-          className="min-h-full px-6 py-16 sm:px-10 lg:px-16 lg:py-20"
+          className="min-h-full px-7 py-20 sm:px-12 lg:px-16 lg:py-24"
           aria-labelledby="contact-title"
         >
           <div className="mx-auto w-full max-w-5xl">
             <div className="grid items-center gap-10 lg:grid-cols-[1fr_0.92fr] lg:gap-16">
               <div>
-                <p className="text-sm font-bold tracking-[0.18em]">CONTACT</p>
+                <p className="text-sm font-bold">CONTACT</p>
                 <h2
                   id="contact-title"
                   className="mt-3 text-5xl font-bold leading-none lg:text-6xl"
                 >
                   Contact
                 </h2>
-                <p className="mt-8 text-sm font-bold leading-8 sm:text-base sm:leading-9">
+                <p className="mt-8 text-sm leading-8 sm:text-base sm:leading-9">
                   ご相談・お仕事のご依頼など、
                   <br />
                   お気軽にお問い合わせください。
@@ -427,7 +498,7 @@ export default function Home() {
             </div>
 
             <form
-              className="mt-10 border-t border-foreground/40 pt-9 lg:mt-12 lg:pt-10"
+              className="mt-12 border-t border-foreground/20 pt-9 lg:pt-10"
               onSubmit={handleContactSubmit}
             >
               <div className="grid gap-6 lg:gap-7">
@@ -436,7 +507,7 @@ export default function Home() {
                     お名前
                   </label>
                   <input
-                    className="w-full rounded-lg border border-foreground/20 bg-white/40 p-3 text-sm font-normal outline-none transition focus:border-foreground/70"
+                    className="w-full rounded-xl border border-foreground/15 bg-white/60 p-3 text-sm outline-none transition placeholder:text-muted/60 hover:border-foreground/30 focus:border-foreground/55 focus:ring-3 focus:ring-foreground/7"
                     id="name"
                     name="name"
                     placeholder="例）山田 太郎"
@@ -449,7 +520,7 @@ export default function Home() {
                     メールアドレス
                   </label>
                   <input
-                    className="w-full rounded-lg border border-foreground/20 bg-white/40 p-3 text-sm font-normal outline-none transition focus:border-foreground/70"
+                    className="w-full rounded-xl border border-foreground/15 bg-white/60 p-3 text-sm outline-none transition placeholder:text-muted/60 hover:border-foreground/30 focus:border-foreground/55 focus:ring-3 focus:ring-foreground/7"
                     id="email"
                     name="email"
                     placeholder="例）tomo@example.com"
@@ -463,7 +534,7 @@ export default function Home() {
                   </label>
                   <div className="relative">
                     <select
-                      className="w-full appearance-none rounded-lg border border-foreground/20 bg-white/40 py-3 pl-3 pr-9 text-sm font-normal text-muted outline-none transition focus:border-foreground/70"
+                      className="w-full appearance-none rounded-xl border border-foreground/15 bg-white/60 py-3 pl-3 pr-9 text-sm text-muted outline-none transition hover:border-foreground/30 focus:border-foreground/55 focus:ring-3 focus:ring-foreground/7"
                       id="budget"
                       name="budget"
                       defaultValue=""
@@ -499,7 +570,7 @@ export default function Home() {
                     お問い合わせ内容
                   </label>
                   <textarea
-                    className="min-h-44 w-full resize-y rounded-lg border border-foreground/20 bg-white/40 p-3 text-sm font-normal leading-8 outline-none transition focus:border-foreground/70"
+                    className="min-h-44 w-full resize-y rounded-xl border border-foreground/15 bg-white/60 p-3 text-sm leading-7 outline-none transition placeholder:text-muted/60 hover:border-foreground/30 focus:border-foreground/55 focus:ring-3 focus:ring-foreground/7"
                     id="message"
                     name="message"
                     placeholder="ご相談内容やご依頼の概要をご記入ください"
@@ -509,10 +580,10 @@ export default function Home() {
 
               <div className="mt-9 flex justify-center">
                 <button
-                  className="inline-flex h-16 w-full max-w-xs items-center justify-center rounded-lg bg-foreground px-8 text-lg font-bold text-white shadow-lg transition hover:bg-foreground/85 focus:outline-none focus:ring-2 focus:ring-foreground/50 focus:ring-offset-2 focus:ring-offset-background"
+                  className="inline-flex h-14 w-full max-w-xs items-center justify-center rounded-full bg-foreground px-8 text-base font-bold text-white shadow-[0_10px_24px_rgba(10,10,10,0.18)] transition duration-300 hover:-translate-y-0.5 hover:bg-foreground/85 hover:shadow-[0_14px_28px_rgba(10,10,10,0.22)] focus:outline-none focus:ring-2 focus:ring-foreground/50 focus:ring-offset-2 focus:ring-offset-background"
                   type="submit"
                 >
-                  Send Message
+                  送信する
                 </button>
               </div>
             </form>
@@ -521,27 +592,33 @@ export default function Home() {
       </main>
 
       <nav
-        className="absolute bottom-6 left-6 right-6 z-20 lg:bottom-auto lg:left-auto lg:right-12 lg:top-1/2 lg:-translate-y-1/2 xl:right-20"
+        className="absolute right-12 top-1/2 z-20 hidden -translate-y-1/2 lg:block xl:right-20"
         aria-label="Primary navigation"
       >
-        <ul className="flex justify-between gap-3 lg:grid lg:gap-16">
+        <ul className="grid gap-16">
           {navItems.map((item) => (
             <li key={item.id} className="relative">
-              {activeSection === item.id ? (
-                <span
-                  className="absolute -top-3 left-0 h-1.5 w-1.5 rounded-full bg-current lg:-left-6 lg:top-6 lg:h-2.5 lg:w-2.5"
-                  aria-hidden="true"
-                />
-              ) : null}
+              <span
+                className={`absolute -left-6 top-6 h-2.5 w-2.5 rounded-full transition-colors ${
+                  activeSection === item.id
+                    ? "bg-foreground"
+                    : "bg-foreground/20"
+                }`}
+                aria-hidden="true"
+              />
               <a
-                className="grid gap-1 text-xs font-bold leading-none sm:text-sm lg:gap-3 lg:text-base"
+                className={`grid gap-3 text-base font-bold leading-none transition-opacity ${
+                  activeSection === item.id
+                    ? "opacity-100"
+                    : "opacity-40 hover:opacity-70"
+                }`}
                 href={`#${item.id}`}
                 onClick={(event) => handleNavClick(event, item.id)}
                 aria-current={
                   activeSection === item.id ? "location" : undefined
                 }
               >
-                <span className="text-xs font-normal lg:text-sm">
+                <span className="text-sm">
                   {item.number}
                 </span>
                 {item.label}
@@ -551,8 +628,8 @@ export default function Home() {
         </ul>
       </nav>
 
-      <p className="absolute bottom-6 left-6 z-20 hidden text-xs font-normal lg:bottom-10 lg:left-10 lg:block lg:text-base">
-        © 2024 TOMO.
+      <p className="absolute bottom-10 left-0 right-[87.5%] z-20 hidden pr-6 text-right text-xs leading-5 lg:block">
+        © TOMO. All Rights Reserved.
       </p>
     </div>
   );
