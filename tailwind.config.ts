@@ -1,28 +1,26 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  content: ["./app/**/*.{js,ts,jsx,tsx,mdx}"],
+  content: [
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
   theme: {
     extend: {
       colors: {
-        background: "#f2edea",
-        surface: "rgb(255 255 255 / 0.6)",
-        chrome: "#faf8f6",
-        foreground: "#0a0a0a",
-        muted: "#52525b",
-      },
-      borderRadius: {
-        panel: "1.75rem",
-      },
-      boxShadow: {
-        soft: "0 12px 30px rgb(72 54 44 / 0.06)",
-        card: "0 12px 36px rgb(72 54 44 / 0.08)",
-        raised: "0 18px 42px rgb(72 54 44 / 0.13)",
-        panel: "0 24px 70px rgb(72 54 44 / 0.12)",
+        background: "#F7F0E7",
+        canvas: "#2A1915",
+        ink: "#2A1915",
+        surface: "#FFFDF9",
+        "terracotta-dark": "#9F452F",
+        muted: "#68544C",
+        subtle: "#806A60",
+        "footer-muted": "#BCA79D",
       },
       fontFamily: {
         sans: [
-          "var(--font-noto-sans-jp)",
+          "Figtree Variable",
+          "Noto Sans JP Variable",
           "Arial",
           "Helvetica Neue",
           "Hiragino Kaku Gothic ProN",
@@ -30,6 +28,15 @@ const config: Config = {
           "Meiryo",
           "sans-serif",
         ],
+      },
+      maxWidth: {
+        site: "1800px",
+      },
+      height: {
+        "hero-mobile": "60svh",
+      },
+      gridTemplateColumns: {
+        site: "30fr 52fr 18fr",
       },
     },
   },
