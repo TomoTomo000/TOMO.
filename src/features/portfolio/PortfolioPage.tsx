@@ -6,8 +6,9 @@ import {
 } from "@/components/ui/FormField";
 import {
   ArrowDownIcon,
-  ArrowRightIcon,
 } from "@/components/ui/Icons";
+import type { PostSummary } from "@/features/blog/types/post.types";
+import { PostCard } from "@/features/blog/components/PostCard";
 import { useState, type FormEvent } from "react";
 
 const navItems = [
@@ -17,38 +18,7 @@ const navItems = [
   { label: "Contact", href: "#contact" },
 ];
 
-const blogPosts = [
-  {
-    category: "Frontend",
-    date: "2024.05.12",
-    title: "Next.jsのApp Routerを使って開発してみて感じたこと",
-    description:
-      "実際のプロジェクトで導入してみて、良かった点やハマったポイントをまとめました。",
-  },
-  {
-    category: "Design",
-    date: "2024.04.28",
-    title: "余白を意識したレイアウトの作り方",
-    description:
-      "デザインにおける余白の役割や、心地よい余白の取り方について考えを整理しました。",
-  },
-  {
-    category: "Frontend",
-    date: "2024.04.15",
-    title: "CSSアニメーションの基本と実装のコツ",
-    description:
-      "よく使うアニメーションのパターンと、実装する上で意識しているポイントを紹介します。",
-  },
-  {
-    category: "Life",
-    date: "2024.04.02",
-    title: "最近購入した古着とコーディネート",
-    description:
-      "最近購入した古着と、コーディネートの記録。好きなものについて書きました。",
-  },
-];
-
-export function PortfolioPage() {
+export function PortfolioPage({ blogPosts }: { blogPosts: PostSummary[] }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleContactSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -247,43 +217,32 @@ export function PortfolioPage() {
               </p>
             </div>
 
-            <div className="mt-12 grid gap-4 sm:grid-cols-2">
-              {blogPosts.map((post) => (
-                <article key={post.title}>
+            {blogPosts.length === 0 ? (
+              <div className="mt-12 rounded-2xl bg-surface px-6 py-16 text-center">
+                <p className="text-lg font-bold">まだ記事はありません</p>
+              </div>
+            ) : (
+              <>
+                <div className="mt-12 grid gap-4 sm:grid-cols-2">
+                  {blogPosts.map((post) => (
+                    <PostCard key={post.id} post={post} />
+                  ))}
+                </div>
+                <div className="mt-10 text-center">
                   <Link
-                    to="/"
-                    hash="blog"
-                    className="group flex min-h-80 cursor-pointer flex-col rounded-2xl bg-surface px-5 py-6 text-ink transition-[filter] hover:brightness-[0.98]"
+                    to="/blog"
+                    search={{
+                      page: 1,
+                      query: "",
+                      tag: "",
+                    }}
+                    className="inline-flex rounded-full bg-canvas px-7 py-3 text-sm font-bold text-background transition-[filter] hover:brightness-110"
                   >
-                    <div className="flex items-center justify-between gap-5 text-sm font-bold">
-                      <p className="rounded-full bg-background px-3 py-1 text-xs text-ink">
-                        {post.category}
-                      </p>
-                      <time
-                        dateTime={post.date.replaceAll(".", "-")}
-                        className="text-xs font-medium text-subtle"
-                      >
-                        {post.date}
-                      </time>
-                    </div>
-                    <div className="mt-8 flex flex-1 flex-col">
-                      <h3 className="text-lg font-bold leading-8">
-                        {post.title}
-                      </h3>
-                      <p className="mt-4 text-sm leading-7 text-muted">
-                        {post.description}
-                      </p>
-                    </div>
-                    <span
-                      className="mt-8 inline-flex size-11 items-center justify-center self-end rounded-full bg-canvas text-background transition-[filter] group-hover:brightness-110"
-                      aria-hidden="true"
-                    >
-                      <ArrowRightIcon className="size-5" />
-                    </span>
+                    記事一覧を見る
                   </Link>
-                </article>
-              ))}
-            </div>
+                </div>
+              </>
+            )}
           </section>
 
           <section

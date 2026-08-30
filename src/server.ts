@@ -10,7 +10,7 @@ const securityHeaders = {
     "font-src 'self'",
     "form-action 'self'",
     "frame-ancestors 'none'",
-    "img-src 'self' data:",
+    "img-src 'self' data: https://images.microcms-assets.io",
     "object-src 'none'",
     "script-src 'self' 'unsafe-inline'",
     "style-src 'self' 'unsafe-inline'",
@@ -23,7 +23,7 @@ const securityHeaders = {
   "X-Frame-Options": "DENY",
 };
 
-export default createServerEntry({
+const application = createServerEntry({
   async fetch(request, options) {
     const response = await handler.fetch(request, options);
     const headers = new Headers(response.headers);
@@ -32,6 +32,13 @@ export default createServerEntry({
       headers.set(name, value);
     });
 
+    if (new URL(request.url).pathname.startsWith("/blog/preview/")) {
+      headers.set("Cache-Control", "private, no-store");
+      headers.set("Pragma", "no-cache");
+      headers.set("Referrer-Policy", "no-referrer");
+      headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
+    }
+
     return new Response(response.body, {
       headers,
       status: response.status,
@@ -39,3 +46,9 @@ export default createServerEntry({
     });
   },
 });
+
+export default {
+  fetch(request) {
+    return application.fetch(request);
+  },
+} satisfies ExportedHandler<Cloudflare.Env>;

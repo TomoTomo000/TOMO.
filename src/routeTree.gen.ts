@@ -9,50 +9,210 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as publicIndexRouteImport } from './routes/(public)/index'
+import { Route as publicBlogRouteRouteImport } from './routes/(public)/blog/route'
+import { Route as publicFeedDotxmlRouteImport } from './routes/(public)/feed[.]xml'
+import { Route as publicRobotsDottxtRouteImport } from './routes/(public)/robots[.]txt'
+import { Route as publicSitemapDotxmlRouteImport } from './routes/(public)/sitemap[.]xml'
+import { Route as publicBlogIndexRouteImport } from './routes/(public)/blog/index'
+import { Route as publicBlogSlugRouteImport } from './routes/(public)/blog/$slug'
+import { Route as publicBlogPreviewContentIdRouteImport } from './routes/(public)/blog/preview/$contentId'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
+const publicIndexRoute = publicIndexRouteImport.update({
+  id: '/(public)/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const publicBlogRouteRoute = publicBlogRouteRouteImport.update({
+  id: '/(public)/blog',
+  path: '/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const publicFeedDotxmlRoute = publicFeedDotxmlRouteImport.update({
+  id: '/(public)/feed.xml',
+  path: '/feed.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const publicRobotsDottxtRoute = publicRobotsDottxtRouteImport.update({
+  id: '/(public)/robots.txt',
+  path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const publicSitemapDotxmlRoute = publicSitemapDotxmlRouteImport.update({
+  id: '/(public)/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const publicBlogIndexRoute = publicBlogIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => publicBlogRouteRoute,
+} as any)
+const publicBlogSlugRoute = publicBlogSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => publicBlogRouteRoute,
+} as any)
+const publicBlogPreviewContentIdRoute =
+  publicBlogPreviewContentIdRouteImport.update({
+    id: '/preview/$contentId',
+    path: '/preview/$contentId',
+    getParentRoute: () => publicBlogRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/blog': typeof publicBlogRouteRouteWithChildren
+  '/feed.xml': typeof publicFeedDotxmlRoute
+  '/robots.txt': typeof publicRobotsDottxtRoute
+  '/sitemap.xml': typeof publicSitemapDotxmlRoute
+  '/': typeof publicIndexRoute
+  '/blog/$slug': typeof publicBlogSlugRoute
+  '/blog/': typeof publicBlogIndexRoute
+  '/blog/preview/$contentId': typeof publicBlogPreviewContentIdRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/feed.xml': typeof publicFeedDotxmlRoute
+  '/robots.txt': typeof publicRobotsDottxtRoute
+  '/sitemap.xml': typeof publicSitemapDotxmlRoute
+  '/': typeof publicIndexRoute
+  '/blog/$slug': typeof publicBlogSlugRoute
+  '/blog': typeof publicBlogIndexRoute
+  '/blog/preview/$contentId': typeof publicBlogPreviewContentIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/(public)/blog': typeof publicBlogRouteRouteWithChildren
+  '/(public)/feed.xml': typeof publicFeedDotxmlRoute
+  '/(public)/robots.txt': typeof publicRobotsDottxtRoute
+  '/(public)/sitemap.xml': typeof publicSitemapDotxmlRoute
+  '/(public)/': typeof publicIndexRoute
+  '/(public)/blog/$slug': typeof publicBlogSlugRoute
+  '/(public)/blog/': typeof publicBlogIndexRoute
+  '/(public)/blog/preview/$contentId': typeof publicBlogPreviewContentIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/blog'
+    | '/feed.xml'
+    | '/robots.txt'
+    | '/sitemap.xml'
+    | '/'
+    | '/blog/$slug'
+    | '/blog/'
+    | '/blog/preview/$contentId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/feed.xml'
+    | '/robots.txt'
+    | '/sitemap.xml'
+    | '/'
+    | '/blog/$slug'
+    | '/blog'
+    | '/blog/preview/$contentId'
+  id:
+    | '__root__'
+    | '/(public)/blog'
+    | '/(public)/feed.xml'
+    | '/(public)/robots.txt'
+    | '/(public)/sitemap.xml'
+    | '/(public)/'
+    | '/(public)/blog/$slug'
+    | '/(public)/blog/'
+    | '/(public)/blog/preview/$contentId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  publicBlogRouteRoute: typeof publicBlogRouteRouteWithChildren
+  publicFeedDotxmlRoute: typeof publicFeedDotxmlRoute
+  publicRobotsDottxtRoute: typeof publicRobotsDottxtRoute
+  publicSitemapDotxmlRoute: typeof publicSitemapDotxmlRoute
+  publicIndexRoute: typeof publicIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/(public)/': {
+      id: '/(public)/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof publicIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/(public)/blog': {
+      id: '/(public)/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof publicBlogRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(public)/feed.xml': {
+      id: '/(public)/feed.xml'
+      path: '/feed.xml'
+      fullPath: '/feed.xml'
+      preLoaderRoute: typeof publicFeedDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(public)/robots.txt': {
+      id: '/(public)/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof publicRobotsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(public)/sitemap.xml': {
+      id: '/(public)/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof publicSitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(public)/blog/': {
+      id: '/(public)/blog/'
+      path: '/'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof publicBlogIndexRouteImport
+      parentRoute: typeof publicBlogRouteRoute
+    }
+    '/(public)/blog/$slug': {
+      id: '/(public)/blog/$slug'
+      path: '/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof publicBlogSlugRouteImport
+      parentRoute: typeof publicBlogRouteRoute
+    }
+    '/(public)/blog/preview/$contentId': {
+      id: '/(public)/blog/preview/$contentId'
+      path: '/preview/$contentId'
+      fullPath: '/blog/preview/$contentId'
+      preLoaderRoute: typeof publicBlogPreviewContentIdRouteImport
+      parentRoute: typeof publicBlogRouteRoute
     }
   }
 }
 
+interface publicBlogRouteRouteChildren {
+  publicBlogSlugRoute: typeof publicBlogSlugRoute
+  publicBlogIndexRoute: typeof publicBlogIndexRoute
+  publicBlogPreviewContentIdRoute: typeof publicBlogPreviewContentIdRoute
+}
+
+const publicBlogRouteRouteChildren: publicBlogRouteRouteChildren = {
+  publicBlogSlugRoute: publicBlogSlugRoute,
+  publicBlogIndexRoute: publicBlogIndexRoute,
+  publicBlogPreviewContentIdRoute: publicBlogPreviewContentIdRoute,
+}
+
+const publicBlogRouteRouteWithChildren = publicBlogRouteRoute._addFileChildren(
+  publicBlogRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  publicBlogRouteRoute: publicBlogRouteRouteWithChildren,
+  publicFeedDotxmlRoute: publicFeedDotxmlRoute,
+  publicRobotsDottxtRoute: publicRobotsDottxtRoute,
+  publicSitemapDotxmlRoute: publicSitemapDotxmlRoute,
+  publicIndexRoute: publicIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

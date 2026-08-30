@@ -14,14 +14,12 @@
     "allowImportingTsExtensions": true,
     "moduleDetection": "force",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
-    "components/**/*.ts",
-    "components/**/*.tsx",
     "vite.config.ts",
     "tailwind.config.ts",
     "worker-configuration.d.ts"

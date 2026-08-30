@@ -18,6 +18,7 @@
 /dist
 /.output
 /.wrangler
+/.tanstack
 
 # misc
 .DS_Store
@@ -31,6 +32,9 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+.dev.vars*
+!.dev.vars.example
+backups/
 
 # typescript
 *.tsbuildinfo
