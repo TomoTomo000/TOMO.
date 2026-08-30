@@ -1,6 +1,6 @@
 import type { ComponentPropsWithoutRef } from "react";
 
-type IconProps = ComponentPropsWithoutRef<"svg">;
+export type IconProps = ComponentPropsWithoutRef<"svg">;
 
 export function ArrowRightIcon(props: IconProps) {
   return (
@@ -38,6 +38,33 @@ export function ChevronDownIcon(props: IconProps) {
         stroke="currentColor"
         strokeLinecap="round"
         strokeLinejoin="round"
+        strokeWidth="1.5"
+      />
+    </svg>
+  );
+}
+
+export function ChevronRightIcon(props: IconProps) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" {...props}>
+      <path
+        d="m6 4 4 4-4 4"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.5"
+      />
+    </svg>
+  );
+}
+
+export function CloseIcon(props: IconProps) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" {...props}>
+      <path
+        d="m4 4 8 8m0-8-8 8"
+        stroke="currentColor"
+        strokeLinecap="round"
         strokeWidth="1.5"
       />
     </svg>

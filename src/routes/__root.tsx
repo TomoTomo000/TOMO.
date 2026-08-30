@@ -8,6 +8,7 @@ import {
 import figtreeCss from "@fontsource-variable/figtree/wght.css?url";
 import notoSansJpCss from "@fontsource-variable/noto-sans-jp/wght.css?url";
 import appCss from "../styles.css?url";
+import { NotFoundPage } from "@/components/elements/NotFoundPage";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -29,9 +30,11 @@ export const Route = createRootRoute({
       { rel: "stylesheet", href: notoSansJpCss },
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.ico" },
+      { rel: "alternate", type: "application/rss+xml", title: "TOMO BLOG", href: "/feed.xml" },
     ],
   }),
   component: RootComponent,
+  notFoundComponent: NotFoundPage,
 });
 
 function RootComponent() {

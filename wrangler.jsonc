@@ -4,7 +4,14 @@
   "compatibility_date": "2026-08-29",
   "compatibility_flags": ["nodejs_compat"],
   "main": "src/server.ts",
+  "vars": {
+    "APP_ENV": "production",
+    "MICROCMS_SERVICE_DOMAIN": "tomo-site"
+  },
   "observability": {
-    "enabled": true
+    "enabled": true,
+    "logs": {
+      "invocation_logs": false
+    }
   }
 }

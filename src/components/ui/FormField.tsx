@@ -1,7 +1,4 @@
-import type {
-  ComponentPropsWithRef,
-  ReactNode,
-} from "react";
+import type { ComponentPropsWithRef, ReactNode } from "react";
 import { ChevronDownIcon } from "@/components/ui/Icons";
 
 const fieldClassName =
