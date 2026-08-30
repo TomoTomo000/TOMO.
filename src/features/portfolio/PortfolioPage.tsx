@@ -15,7 +15,7 @@ const navItems = [
   { label: "Home", href: "/" },
   { label: "About", href: "#about" },
   { label: "Blog", href: "#blog" },
-  { label: "Contact", href: "#contact" },
+  // { label: "Contact", href: "#contact" },
 ];
 
 export function PortfolioPage({ blogPosts }: { blogPosts: PostSummary[] }) {
@@ -245,7 +245,7 @@ export function PortfolioPage({ blogPosts }: { blogPosts: PostSummary[] }) {
             )}
           </section>
 
-          <section
+          {/* <section
             id="contact"
             className="scroll-mt-2 rounded-3xl bg-background px-6 py-20 sm:px-8 sm:py-24"
             aria-labelledby="contact-title"
@@ -317,7 +317,7 @@ export function PortfolioPage({ blogPosts }: { blogPosts: PostSummary[] }) {
                 送信する
               </button>
             </form>
-          </section>
+          </section> */}
 
           <footer className="px-6 py-14 text-background sm:px-8">
             <div className="flex flex-col items-center gap-4 text-center">
