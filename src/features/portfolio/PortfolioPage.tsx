@@ -1,15 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import {
-  SelectField,
-  TextareaField,
-  TextField,
-} from "@/components/ui/FormField";
-import {
   ArrowDownIcon,
 } from "@/components/ui/Icons";
 import type { PostSummary } from "@/features/blog/types/post.types";
 import { PostCard } from "@/features/blog/components/PostCard";
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
+import { usePageLoader } from "@/features/page-loader/usePageLoader";
 
 const navItems = [
   { label: "Home", href: "/" },
@@ -20,13 +16,12 @@ const navItems = [
 
 export function PortfolioPage({ blogPosts }: { blogPosts: PostSummary[] }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const handleContactSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-  };
+  const { state: loaderState } = usePageLoader();
 
   return (
-    <div className="min-h-screen overflow-x-clip bg-canvas text-ink lg:h-svh lg:overflow-hidden">
+    <div
+      className="min-h-screen overflow-x-clip bg-canvas text-ink lg:h-svh lg:overflow-hidden"
+    >
       <header className="pointer-events-none fixed inset-x-0 top-0 z-50 px-4 pt-4 lg:hidden">
         <div className="flex items-start justify-between gap-4">
           <a
@@ -110,7 +105,11 @@ export function PortfolioPage({ blogPosts }: { blogPosts: PostSummary[] }) {
         </nav>
       </div>
 
-      <div className="mx-auto max-w-site lg:grid lg:h-svh lg:grid-cols-site lg:gap-2 lg:p-2">
+      <div
+        className={`mx-auto max-w-site transform-gpu transition-transform duration-[750ms] ease-[cubic-bezier(0.76,0,0.24,1)] lg:grid lg:h-svh lg:grid-cols-site lg:gap-2 lg:p-2 ${
+          loaderState === "entering" ? "translate-y-[7svh]" : "translate-y-0"
+        }`}
+      >
         <aside
           className="relative h-hero-mobile overflow-hidden bg-canvas lg:h-full lg:rounded-3xl"
         >
@@ -121,24 +120,30 @@ export function PortfolioPage({ blogPosts }: { blogPosts: PostSummary[] }) {
           >
             TOMO.
           </a>
-          <img
-            src="/img/hero-designer.png"
-            alt="ノートパソコンで制作するTOMOのイラスト"
-            width={1552}
-            height={1040}
-            className="absolute inset-0 size-full object-cover object-center"
-          />
+          <picture className="absolute inset-0">
+            <source
+              media="(prefers-reduced-motion: reduce)"
+              srcSet="/img/hero-designer.svg"
+            />
+            <img
+              src="/img/hero-designer.svg"
+              alt="ノートパソコンで制作するTOMOのイラスト"
+              width={1536}
+              height={1024}
+              className="absolute inset-0 size-full object-cover object-center"
+            />
+          </picture>
         </aside>
 
         <main
-          className="min-w-0 space-y-2 p-2 pt-0 lg:h-full lg:overflow-y-auto lg:overscroll-contain lg:p-0"
+          className="min-w-0 space-y-2 p-2 pt-0 lg:h-full lg:overflow-y-auto lg:overscroll-contain lg:p-0 lg:[scrollbar-color:#F7F0E7_transparent] lg:[scrollbar-width:auto] lg:[&::-webkit-scrollbar]:w-3.5 lg:[&::-webkit-scrollbar-track]:bg-transparent lg:[&::-webkit-scrollbar-thumb]:rounded-full lg:[&::-webkit-scrollbar-thumb]:border-[3px] lg:[&::-webkit-scrollbar-thumb]:border-solid lg:[&::-webkit-scrollbar-thumb]:border-transparent lg:[&::-webkit-scrollbar-thumb]:bg-background lg:[&::-webkit-scrollbar-thumb]:bg-clip-content lg:[&::-webkit-scrollbar-thumb:hover]:bg-footer-muted"
           aria-label="メインコンテンツ"
         >
           <section
             className="relative flex min-h-svh scroll-mt-2 items-center justify-center rounded-3xl bg-background px-6 py-28 text-center sm:px-10"
             aria-labelledby="hero-title"
           >
-            <div className="max-w-2xl">
+            <div>
               <h1
                 id="hero-title"
                 className="font-black leading-none"
@@ -147,7 +152,7 @@ export function PortfolioPage({ blogPosts }: { blogPosts: PostSummary[] }) {
                   TOMO.
                 </span>
                 <span className="mt-4 block text-sm sm:text-base">
-                  FRONTEND ENGINEER & WEB DESIGNER
+                  FRONTEND ENGINEER &amp; WEB DESIGNER
                 </span>
               </h1>
             </div>
@@ -173,7 +178,7 @@ export function PortfolioPage({ blogPosts }: { blogPosts: PostSummary[] }) {
             <div className="mt-14 grid items-center gap-10 md:grid-cols-2">
               <div className="relative aspect-square overflow-hidden rounded-2xl bg-canvas">
                 <img
-                  src="/img/about-profile.png"
+                  src="/img/about-profile.svg"
                   alt="TOMOのプロフィールイラスト"
                   width={1223}
                   height={1286}

@@ -12,7 +12,7 @@ export const Route = createFileRoute("/(public)/blog/$slug")({
     const pageUrl = `${siteUrl}/blog/${encodeURIComponent(post.slug)}`;
     const imageUrl = post.cover
       ? new URL(post.cover.displayUrl, siteUrl).href
-      : `${siteUrl}/img/hero-designer.png`;
+      : `${siteUrl}/img/hero-designer.svg`;
     const structuredData = JSON.stringify({
       "@context": "https://schema.org",
       "@type": "BlogPosting",

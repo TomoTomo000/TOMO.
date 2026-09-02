@@ -1,0 +1,82 @@
+import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useRouterState } from "@tanstack/react-router";
+import {
+  PageLoaderContext,
+  type PageLoaderState,
+} from "./usePageLoader";
+
+type InitialPageLoaderState = Exclude<PageLoaderState, "loading">;
+
+export function PageLoaderProvider({ children }: { children: ReactNode }) {
+  const isRouterLoading = useRouterState({
+    select: (routerState) => routerState.isLoading,
+  });
+  const [initialState, setInitialState] =
+    useState<InitialPageLoaderState>("entering");
+
+  useEffect(() => {
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    if (reducedMotion) {
+      const reducedMotionTimer = setTimeout(() => {
+        setInitialState("done");
+      }, 0);
+
+      return () => clearTimeout(reducedMotionTimer);
+    }
+
+    const previousOverflow = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+
+    let cancelled = false;
+    let leaveTimer: ReturnType<typeof setTimeout> | undefined;
+    let minimumTimer: ReturnType<typeof setTimeout> | undefined;
+    let onWindowLoad: (() => void) | undefined;
+
+    const minimumDisplay = new Promise<void>((resolve) => {
+      minimumTimer = setTimeout(resolve, 750);
+    });
+
+    const pageLoaded = new Promise<void>((resolve) => {
+      if (document.readyState === "complete") {
+        resolve();
+        return;
+      }
+
+      onWindowLoad = resolve;
+      window.addEventListener("load", onWindowLoad, { once: true });
+    });
+
+    const fontsLoaded = document.fonts?.ready ?? Promise.resolve();
+
+    void Promise.all([minimumDisplay, pageLoaded, fontsLoaded]).then(() => {
+      if (cancelled) return;
+
+      setInitialState("leaving");
+      leaveTimer = setTimeout(() => {
+        document.documentElement.style.overflow = previousOverflow;
+        setInitialState("done");
+      }, 750);
+    });
+
+    return () => {
+      cancelled = true;
+      if (minimumTimer) clearTimeout(minimumTimer);
+      if (leaveTimer) clearTimeout(leaveTimer);
+      if (onWindowLoad) window.removeEventListener("load", onWindowLoad);
+      document.documentElement.style.overflow = previousOverflow;
+    };
+  }, []);
+
+  const state: PageLoaderState =
+    initialState === "done" && isRouterLoading ? "loading" : initialState;
+  const value = useMemo(() => ({ state }), [state]);
+
+  return (
+    <PageLoaderContext.Provider value={value}>
+      {children}
+    </PageLoaderContext.Provider>
+  );
+}

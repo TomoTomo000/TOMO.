@@ -9,6 +9,8 @@ import figtreeCss from "@fontsource-variable/figtree/wght.css?url";
 import notoSansJpCss from "@fontsource-variable/noto-sans-jp/wght.css?url";
 import appCss from "../styles.css?url";
 import { NotFoundPage } from "@/components/elements/NotFoundPage";
+import { PageLoader } from "@/features/page-loader/PageLoader";
+import { PageLoaderProvider } from "@/features/page-loader/PageLoaderProvider";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -40,7 +42,10 @@ export const Route = createRootRoute({
 function RootComponent() {
   return (
     <RootDocument>
-      <Outlet />
+      <PageLoaderProvider>
+        <PageLoader />
+        <Outlet />
+      </PageLoaderProvider>
     </RootDocument>
   );
 }
