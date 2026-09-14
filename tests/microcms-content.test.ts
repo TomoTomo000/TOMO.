@@ -16,6 +16,18 @@ describe("sanitizeMicroCmsArticle", () => {
     ]);
   });
 
+  test("includes h2 and h3 in the table of contents but excludes h4", () => {
+    const article = sanitizeMicroCmsArticle(
+      "<h2>セクション</h2><h3>小見出し</h3><h4>補足見出し</h4>",
+    );
+
+    expect(article.html).toContain('<h4 id="heading-3">補足見出し</h4>');
+    expect(article.tableOfContents).toEqual([
+      { id: "heading-1", level: 2, text: "セクション" },
+      { id: "heading-2", level: 3, text: "小見出し" },
+    ]);
+  });
+
   test("keeps only images served by the microCMS image domain", () => {
     const article = sanitizeMicroCmsArticle(
       '<img src="https://evil.example/image.png"><img src="https://images.microcms-assets.io/assets/a/b/image.png" alt="cover">',

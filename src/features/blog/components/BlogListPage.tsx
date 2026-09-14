@@ -1,6 +1,9 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { useRef } from "react";
+import { Button } from "@/components/ui/Button";
+import { IconButton } from "@/components/ui/IconButton";
 import { CloseIcon } from "@/components/ui/Icons";
+import { AppLink } from "@/components/ui/Link";
 import type { PaginatedPosts, Taxonomy } from "../types/post.types";
 import { BlogContainer } from "./BlogContainer";
 import { PostCard } from "./PostCard";
@@ -24,7 +27,7 @@ export function BlogListPage({
   const navigate = useNavigate();
 
   return (
-    <main className="min-h-[70vh] py-16 sm:py-24">
+    <main className="py-24">
       <BlogContainer>
         <div className="text-center">
           <h1 className="text-5xl font-black sm:text-6xl">BLOG</h1>
@@ -62,11 +65,11 @@ export function BlogListPage({
               defaultValue={search.query}
               placeholder="記事を検索"
               maxLength={100}
-              className="blog-search-input peer w-full rounded-full bg-surface py-3.5 pl-5 pr-14 text-sm outline-none ring-ink focus:ring-2"
+              className="blog-search-input peer w-full rounded-full bg-surface py-3.5 pl-5 pr-14 text-sm outline-none ring-ink transition-shadow focus:ring-2"
             />
-            <button
-              type="button"
-              className="absolute right-2 top-1/2 grid size-9 -translate-y-1/2 cursor-pointer place-items-center rounded-full text-muted transition-colors hover:bg-ink/5 hover:text-ink peer-placeholder-shown:hidden"
+            <IconButton
+              size="sm"
+              className="absolute right-2 top-1/2 -translate-y-1/2 peer-placeholder-shown:hidden"
               aria-label="検索語をクリア"
               onClick={() => {
                 if (!searchInputRef.current) return;
@@ -75,21 +78,21 @@ export function BlogListPage({
               }}
             >
               <CloseIcon className="size-4" />
-            </button>
+            </IconButton>
           </div>
-          <button
+          <Button
             type="submit"
-            className="cursor-pointer rounded-full bg-canvas px-8 py-3.5 text-sm font-bold text-background transition-[filter] hover:brightness-110"
+            size="lg"
           >
             検索
-          </button>
+          </Button>
         </form>
 
         {tags.length ? (
           <div className="mt-6 flex flex-wrap items-center gap-2 text-sm">
             <span className="mr-1 text-xs font-bold text-muted">タグ</span>
             {tags.map((tag) => (
-              <Link
+              <AppLink
                 key={tag.id}
                 to="/blog"
                 search={{
@@ -97,10 +100,12 @@ export function BlogListPage({
                   page: 1,
                   tag: search.tag === tag.slug ? "" : tag.slug,
                 }}
+                variant="surface"
+                data-selected={search.tag === tag.slug ? true : undefined}
                 className={`rounded-full px-4 py-2 font-bold ${search.tag === tag.slug ? "bg-canvas text-background" : "bg-surface"}`}
               >
                 #{tag.name}
-              </Link>
+              </AppLink>
             ))}
           </div>
         ) : null}
@@ -114,7 +119,7 @@ export function BlogListPage({
             </p>
           </div>
         ) : (
-          <div className="mt-12 grid gap-4 sm:grid-cols-2">
+          <div className="mt-12 grid gap-6 sm:grid-cols-2">
             {posts.items.map((post) => (
               <PostCard key={post.id} post={post} />
             ))}
@@ -127,25 +132,27 @@ export function BlogListPage({
             aria-label="ページ送り"
           >
             {posts.page > 1 ? (
-              <Link
+              <AppLink
                 to="/blog"
                 search={{ ...search, page: posts.page - 1 }}
+                variant="surface"
                 className="rounded-full bg-surface px-5 py-2 text-sm font-bold"
               >
                 前へ
-              </Link>
+              </AppLink>
             ) : null}
             <p className="text-sm text-muted">
               {posts.page} / {posts.pageCount}
             </p>
             {posts.page < posts.pageCount ? (
-              <Link
+              <AppLink
                 to="/blog"
                 search={{ ...search, page: posts.page + 1 }}
+                variant="surface"
                 className="rounded-full bg-surface px-5 py-2 text-sm font-bold"
               >
                 次へ
-              </Link>
+              </AppLink>
             ) : null}
           </nav>
         ) : null}

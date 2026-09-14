@@ -32,6 +32,10 @@ const application = createServerEntry({
       headers.set(name, value);
     });
 
+    if (response.status >= 400) {
+      headers.set("X-Robots-Tag", "noindex");
+    }
+
     if (new URL(request.url).pathname.startsWith("/blog/preview/")) {
       headers.set("Cache-Control", "private, no-store");
       headers.set("Pragma", "no-cache");

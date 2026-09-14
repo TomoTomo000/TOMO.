@@ -1,15 +1,19 @@
-import type { ComponentPropsWithoutRef } from "react";
+import type { ReactNode } from "react";
 
-type BlogContainerProps = ComponentPropsWithoutRef<"div">;
+type BlogContainerProps = {
+  children: ReactNode;
+  className?: string;
+};
 
 export function BlogContainer({
+  children,
   className = "",
-  ...props
 }: BlogContainerProps) {
   return (
     <div
       className={`mx-auto w-full max-w-6xl px-5 sm:px-8 ${className}`.trim()}
-      {...props}
-    />
+    >
+      {children}
+    </div>
   );
 }

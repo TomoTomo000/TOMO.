@@ -5,7 +5,8 @@ import {
   type PageLoaderState,
 } from "./usePageLoader";
 
-type InitialPageLoaderState = Exclude<PageLoaderState, "loading">;
+type InitialPageLoaderState = "entering" | "leaving" | "done";
+type RoutePageLoaderState = "loading" | "leaving-route" | "done";
 
 export function PageLoaderProvider({ children }: { children: ReactNode }) {
   const isRouterLoading = useRouterState({
@@ -13,6 +14,8 @@ export function PageLoaderProvider({ children }: { children: ReactNode }) {
   });
   const [initialState, setInitialState] =
     useState<InitialPageLoaderState>("entering");
+  const [routeState, setRouteState] =
+    useState<RoutePageLoaderState>("done");
 
   useEffect(() => {
     const reducedMotion = window.matchMedia(
@@ -70,8 +73,35 @@ export function PageLoaderProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  useEffect(() => {
+    if (initialState !== "done") return;
+
+    const routeStateTimer = setTimeout(() => {
+      if (isRouterLoading) {
+        setRouteState("loading");
+        return;
+      }
+
+      setRouteState((currentState) =>
+        currentState === "loading" ? "leaving-route" : currentState,
+      );
+    }, 0);
+
+    return () => clearTimeout(routeStateTimer);
+  }, [initialState, isRouterLoading]);
+
+  useEffect(() => {
+    if (routeState !== "leaving-route") return;
+
+    const routeLeaveTimer = setTimeout(() => {
+      setRouteState("done");
+    }, 300);
+
+    return () => clearTimeout(routeLeaveTimer);
+  }, [routeState]);
+
   const state: PageLoaderState =
-    initialState === "done" && isRouterLoading ? "loading" : initialState;
+    initialState === "done" ? routeState : initialState;
   const value = useMemo(() => ({ state }), [state]);
 
   return (

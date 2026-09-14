@@ -113,7 +113,7 @@ export function sanitizeMicroCmsArticle(value: string): SanitizedArticle {
   });
 
   const tableOfContents: HtmlTableOfContentsItem[] = [];
-  const headingPattern = /<h([2-4]) id="(heading-\d+)">([\s\S]*?)<\/h\1>/g;
+  const headingPattern = /<h([2-3]) id="(heading-\d+)">([\s\S]*?)<\/h\1>/g;
   for (const match of sanitized.matchAll(headingPattern)) {
     tableOfContents.push({
       level: Number(match[1]),

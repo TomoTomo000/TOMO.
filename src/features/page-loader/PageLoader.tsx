@@ -4,6 +4,7 @@ const loadingCharacters = Array.from("LOADING...");
 
 export function PageLoader() {
   const { state } = usePageLoader();
+  const isLeaving = state === "leaving" || state === "leaving-route";
 
   if (state === "done") return null;
 
@@ -12,11 +13,13 @@ export function PageLoader() {
       className={`fixed inset-0 z-[100] grid place-items-center overflow-hidden bg-canvas will-change-transform ${
         state === "leaving"
           ? "pointer-events-none [animation:page-loader-panel-out_750ms_cubic-bezier(0.76,0,0.24,1)_forwards]"
+          : state === "leaving-route"
+            ? "pointer-events-none [animation:page-loader-panel-out_300ms_cubic-bezier(0.76,0,0.24,1)_forwards]"
           : "cursor-wait"
       }`}
       role="status"
       aria-label="ページを読み込んでいます"
-      aria-hidden={state === "leaving"}
+      aria-hidden={isLeaving}
     >
       <div className="text-center">
         <p className="text-background font-black leading-none">

@@ -1,14 +1,14 @@
 import { Link } from "@tanstack/react-router";
-import {
-  ArrowDownIcon,
-} from "@/components/ui/Icons";
+import { ButtonLink } from "@/components/ui/Button";
+import { IconButton } from "@/components/ui/IconButton";
+import { ArrowDownIcon } from "@/components/ui/Icons";
+import { AppLink } from "@/components/ui/Link";
 import type { PostSummary } from "@/features/blog/types/post.types";
 import { PostCard } from "@/features/blog/components/PostCard";
 import { useState } from "react";
 import { usePageLoader } from "@/features/page-loader/usePageLoader";
 
 const navItems = [
-  { label: "Home", href: "/" },
   { label: "About", href: "#about" },
   { label: "Blog", href: "#blog" },
   // { label: "Contact", href: "#contact" },
@@ -24,17 +24,20 @@ export function PortfolioPage({ blogPosts }: { blogPosts: PostSummary[] }) {
     >
       <header className="pointer-events-none fixed inset-x-0 top-0 z-50 px-4 pt-4 lg:hidden">
         <div className="flex items-start justify-between gap-4">
-          <a
-            href="/"
+          <AppLink
+            to="/"
+            reloadDocument
+            variant="control"
             className="pointer-events-auto inline-flex h-12 items-center rounded-full bg-background px-5 text-xl font-black text-ink"
             aria-label="TOMO ホーム"
+            onClick={() => setIsMenuOpen(false)}
           >
             TOMO.
-          </a>
+          </AppLink>
 
-          <button
-            type="button"
-            className="pointer-events-auto relative grid size-12 cursor-pointer place-items-center rounded-full bg-background text-ink"
+          <IconButton
+            variant="surface"
+            className="pointer-events-auto relative"
             aria-label={isMenuOpen ? "メニューを閉じる" : "メニューを開く"}
             aria-expanded={isMenuOpen}
             aria-controls="mobile-navigation"
@@ -42,16 +45,16 @@ export function PortfolioPage({ blogPosts }: { blogPosts: PostSummary[] }) {
           >
             <span className="sr-only">Menu</span>
             <span
-              className={`absolute h-0.5 w-6 bg-ink transition-transform ${
+              className={`absolute h-0.5 w-6 bg-ink transition-transform duration-200 ${
                 isMenuOpen ? "rotate-45" : "-translate-y-1"
               }`}
             />
             <span
-              className={`absolute h-0.5 w-6 bg-ink transition-transform ${
+              className={`absolute h-0.5 w-6 bg-ink transition-transform duration-200 ${
                 isMenuOpen ? "-rotate-45" : "translate-y-1"
               }`}
             />
-          </button>
+          </IconButton>
         </div>
 
       </header>
@@ -82,23 +85,14 @@ export function PortfolioPage({ blogPosts }: { blogPosts: PostSummary[] }) {
           <ul className="space-y-2">
             {navItems.map((item) => (
               <li key={item.href}>
-                {item.href === "/" ? (
-                  <a
-                    href="/"
-                    className="block rounded-2xl px-4 py-3 text-lg font-black uppercase text-background transition-colors hover:bg-background hover:text-ink"
-                  >
-                    {item.label}
-                  </a>
-                ) : (
-                  <Link
-                    to="/"
-                    hash={item.href.slice(1)}
-                    onClick={() => setIsMenuOpen(false)}
-                    className="block rounded-2xl px-4 py-3 text-lg font-black uppercase text-background transition-colors hover:bg-background hover:text-ink"
-                  >
-                    {item.label}
-                  </Link>
-                )}
+                <Link
+                  to="/"
+                  hash={item.href.slice(1)}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="block rounded-2xl px-4 py-3 text-lg font-black uppercase text-background transition-colors hover:bg-background hover:text-ink"
+                >
+                  {item.label}
+                </Link>
               </li>
             ))}
           </ul>
@@ -113,17 +107,19 @@ export function PortfolioPage({ blogPosts }: { blogPosts: PostSummary[] }) {
         <aside
           className="relative h-hero-mobile overflow-hidden bg-canvas lg:h-full lg:rounded-3xl"
         >
-          <a
-            href="/"
+          <AppLink
+            to="/"
+            reloadDocument
+            variant="control"
             className="absolute left-7 top-7 z-10 hidden h-12 items-center rounded-full bg-background px-5 text-xl font-black text-ink lg:inline-flex"
             aria-label="TOMO ホーム"
           >
             TOMO.
-          </a>
+          </AppLink>
           <picture className="absolute inset-0">
             <source
               media="(prefers-reduced-motion: reduce)"
-              srcSet="/img/hero-designer.svg"
+              srcSet="/img/hero-designer-static.svg"
             />
             <img
               src="/img/hero-designer.svg"
@@ -195,7 +191,7 @@ export function PortfolioPage({ blogPosts }: { blogPosts: PostSummary[] }) {
                     約3年半フレンチレストランに勤務したのち、Web業界へ転職。
                   </p>
                   <p>
-                    現在はWeb制作会社で、フロントエンドエンジニア・デザイナーとして働いています。
+                    現在はWeb制作会社で、フロントエンドエンジニア・WEBデザイナーとして働いています。
                   </p>
                   <p>
                     実装するだけではなく、長く運用できる設計や、全体を見据えたスケジューリング、クライアントの想いを整理するデザインを大切にしながら制作しています。
@@ -228,23 +224,22 @@ export function PortfolioPage({ blogPosts }: { blogPosts: PostSummary[] }) {
               </div>
             ) : (
               <>
-                <div className="mt-12 grid gap-4 sm:grid-cols-2">
+                <div className="mt-12 grid gap-6 sm:grid-cols-2">
                   {blogPosts.map((post) => (
                     <PostCard key={post.id} post={post} />
                   ))}
                 </div>
                 <div className="mt-10 text-center">
-                  <Link
+                  <ButtonLink
                     to="/blog"
                     search={{
                       page: 1,
                       query: "",
                       tag: "",
                     }}
-                    className="inline-flex rounded-full bg-canvas px-7 py-3 text-sm font-bold text-background transition-[filter] hover:brightness-110"
                   >
                     記事一覧を見る
-                  </Link>
+                  </ButtonLink>
                 </div>
               </>
             )}
@@ -315,12 +310,13 @@ export function PortfolioPage({ blogPosts }: { blogPosts: PostSummary[] }) {
                 />
               </div>
 
-              <button
+              <Button
                 type="submit"
-                className="mx-auto mt-10 flex w-full max-w-56 cursor-pointer items-center justify-center rounded-full bg-canvas px-8 py-3.5 text-center text-sm font-bold text-background transition-[filter] hover:brightness-110"
+                size="lg"
+                className="mx-auto mt-10 w-full max-w-56"
               >
                 送信する
-              </button>
+              </Button>
             </form>
           </section> */}
 
@@ -341,22 +337,13 @@ export function PortfolioPage({ blogPosts }: { blogPosts: PostSummary[] }) {
             <ul className="space-y-2">
               {navItems.map((item) => (
                 <li key={item.href}>
-                  {item.href === "/" ? (
-                    <a
-                      href="/"
-                      className="block rounded-2xl px-4 py-3 text-lg font-black uppercase text-ink transition-colors hover:bg-canvas hover:text-background"
-                    >
-                      {item.label}
-                    </a>
-                  ) : (
-                    <Link
-                      to="/"
-                      hash={item.href.slice(1)}
-                      className="block rounded-2xl px-4 py-3 text-lg font-black uppercase text-ink transition-colors hover:bg-canvas hover:text-background"
-                    >
-                      {item.label}
-                    </Link>
-                  )}
+                  <Link
+                    to="/"
+                    hash={item.href.slice(1)}
+                    className="block rounded-2xl px-4 py-3 text-lg font-black uppercase text-ink transition-colors hover:bg-canvas hover:text-background"
+                  >
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>

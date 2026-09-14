@@ -6,6 +6,7 @@
   "main": "src/server.ts",
   "vars": {
     "APP_ENV": "production",
+    "SITE_URL": "https://tomo-site.tomopage.workers.dev",
     "MICROCMS_SERVICE_DOMAIN": "tomo-site"
   },
   "observability": {

@@ -1,6 +1,11 @@
 import { createContext, useContext } from "react";
 
-export type PageLoaderState = "entering" | "leaving" | "loading" | "done";
+export type PageLoaderState =
+  | "entering"
+  | "leaving"
+  | "leaving-route"
+  | "loading"
+  | "done";
 
 type PageLoaderContextValue = {
   state: PageLoaderState;

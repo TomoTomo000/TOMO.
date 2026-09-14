@@ -37,6 +37,9 @@ const config: Config = {
       gridTemplateColumns: {
         site: "30fr 52fr 18fr",
       },
+      transitionTimingFunction: {
+        pop: "cubic-bezier(0.22, 1, 0.36, 1)",
+      },
     },
   },
 };

@@ -1,51 +1,53 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { BlogArticlePage } from "@/features/blog/components/BlogArticlePage";
-import { BlogErrorPage } from "@/features/blog/components/BlogErrorPage";
 import { getPublicPostPageData } from "@/features/blog/server/post.functions";
+import { createSeoHead, DEFAULT_SEO_IMAGE, serializeJsonLd, SITE_DESCRIPTION } from "@/lib/seo";
 
 export const Route = createFileRoute("/(public)/blog/$slug")({
   loader: ({ params }) => getPublicPostPageData({ data: { slug: params.slug } }),
-  errorComponent: BlogErrorPage,
   head: ({ loaderData }) => {
     if (!loaderData) return {};
     const { post, siteUrl } = loaderData;
     const pageUrl = `${siteUrl}/blog/${encodeURIComponent(post.slug)}`;
     const imageUrl = post.cover
       ? new URL(post.cover.displayUrl, siteUrl).href
-      : `${siteUrl}/img/hero-designer.svg`;
-    const structuredData = JSON.stringify({
+      : new URL(DEFAULT_SEO_IMAGE.url, siteUrl).href;
+    const seo = createSeoHead({
+      siteUrl,
+      path: `/blog/${encodeURIComponent(post.slug)}`,
+      title: `${post.title} | TOMO`,
+      description: post.excerpt,
+      type: "article",
+      image: post.cover ? {
+        url: imageUrl,
+        alt: post.cover.altText || post.title,
+        width: post.cover.width,
+        height: post.cover.height,
+      } : undefined,
+    });
+    const structuredData = serializeJsonLd({
       "@context": "https://schema.org",
       "@type": "BlogPosting",
       headline: post.title,
-      description: post.excerpt,
+      description: post.excerpt || SITE_DESCRIPTION,
       image: imageUrl,
-      datePublished: post.publishedAt,
+      datePublished: post.publishedAt ?? undefined,
       dateModified: post.updatedAt,
       mainEntityOfPage: pageUrl,
-      author: { "@type": "Person", name: "TOMO" },
+      author: { "@type": "Person", name: "TOMO", url: `${siteUrl}/` },
       publisher: { "@type": "Person", name: "TOMO" },
-    }).replaceAll("<", "\\u003c");
+      inLanguage: "ja",
+    });
 
     return {
       meta: [
-        { title: `${post.title} | TOMO` },
-        { name: "description", content: post.excerpt },
-        { property: "og:title", content: post.title },
-        { property: "og:description", content: post.excerpt },
-        { property: "og:type", content: "article" },
-        { property: "og:url", content: pageUrl },
-        { property: "og:image", content: imageUrl },
-        { property: "og:site_name", content: "TOMO" },
-        { name: "twitter:card", content: "summary_large_image" },
-        { name: "twitter:title", content: post.title },
-        { name: "twitter:description", content: post.excerpt },
-        { name: "twitter:image", content: imageUrl },
+        ...seo.meta,
         ...(post.publishedAt
           ? [{ property: "article:published_time", content: post.publishedAt }]
           : []),
         { property: "article:modified_time", content: post.updatedAt },
       ],
-      links: [{ rel: "canonical", href: pageUrl }],
+      links: seo.links,
       scripts: [{ type: "application/ld+json", children: structuredData }],
     };
   },
