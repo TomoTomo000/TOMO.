@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { BlogArticlePage } from "@/features/blog/components/BlogArticlePage";
-import { BlogErrorPage } from "@/features/blog/components/BlogErrorPage";
 import { getPreviewPostPageData } from "@/features/blog/server/post.functions";
 
 const previewSearchSchema = z.object({
@@ -20,7 +19,6 @@ export const Route = createFileRoute("/(public)/blog/preview/$contentId")({
         secret: deps.secret,
       },
     }),
-  errorComponent: BlogErrorPage,
   head: () => ({
     meta: [
       { title: "プレビュー | TOMO" },

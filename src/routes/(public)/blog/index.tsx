@@ -5,10 +5,11 @@ import {
   stripSearchParams,
 } from "@tanstack/react-router";
 import { z } from "zod";
-import { BlogErrorPage } from "@/features/blog/components/BlogErrorPage";
 import { BlogListPage } from "@/features/blog/components/BlogListPage";
 import { getPublicPosts } from "@/features/blog/server/post.functions";
 import { getPublicTags } from "@/features/blog/server/taxonomy.functions";
+import { getPublicSiteUrl } from "@/lib/site.functions";
+import { createSeoHead } from "@/lib/seo";
 
 const searchSchema = z.object({
   page: z.coerce.number().int().min(1).max(10_000).catch(1),
@@ -41,9 +42,10 @@ export const Route = createFileRoute("/(public)/blog/")({
       throw redirect({ to: "/blog", search: deps, replace: true });
     }
 
-    const [posts, tags] = await Promise.all([
+    const [posts, tags, siteUrl] = await Promise.all([
       getPublicPosts({ data: { ...deps, pageSize: 10 } }),
       getPublicTags(),
+      getPublicSiteUrl(),
     ]);
 
     if (deps.tag && !tags.some((tag) => tag.slug === deps.tag)) {
@@ -62,25 +64,18 @@ export const Route = createFileRoute("/(public)/blog/")({
       });
     }
 
-    return { posts, tags };
+    return { posts, tags, siteUrl };
   },
-  errorComponent: BlogErrorPage,
-  head: ({ match }) => {
+  head: ({ match, loaderData }) => {
+    if (!loaderData) return {};
     const { page, query, tag } = match.search;
-    const isFilteredList = page > 1 || Boolean(query || tag);
-
-    return {
-      meta: [
-        { title: "BLOG | TOMO" },
-        {
-          name: "description",
-          content: "TOMOの日々の制作、デザイン、コードについてのブログです。",
-        },
-        ...(isFilteredList
-          ? [{ name: "robots", content: "noindex,follow" }]
-          : []),
-      ],
-    };
+    return createSeoHead({
+      siteUrl: loaderData.siteUrl,
+      path: `/blog${canonicalSearchString(match.search)}`,
+      title: `${query ? `「${query}」の検索結果 | ` : tag ? `${loaderData.tags.find((item) => item.slug === tag)?.name ?? tag} | ` : ""}BLOG${page > 1 ? ` - ${page}ページ目` : ""} | TOMO`,
+      description: `TOMOの日々の制作、デザイン、コードについてのブログです。${page > 1 ? `一覧の${page}ページ目です。` : ""}`,
+      noindex: Boolean(query || tag),
+    });
   },
   component: BlogIndexRoute,
 });

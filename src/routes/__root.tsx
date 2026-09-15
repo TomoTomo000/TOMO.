@@ -9,6 +9,9 @@ import figtreeCss from "@fontsource-variable/figtree/wght.css?url";
 import notoSansJpCss from "@fontsource-variable/noto-sans-jp/wght.css?url";
 import appCss from "../styles.css?url";
 import { NotFoundPage } from "@/components/elements/NotFoundPage";
+import { PageLoader } from "@/features/page-loader/PageLoader";
+import { PageLoaderProvider } from "@/features/page-loader/PageLoaderProvider";
+import { SITE_DESCRIPTION, SITE_TITLE } from "@/lib/seo";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -20,10 +23,9 @@ export const Route = createRootRoute({
       },
       {
         name: "description",
-        content:
-          "フロントエンドエンジニア・デザイナー TOMOのwebサイトです。制作実績や日々の学び、コーディング・デザインについての備忘録をまとめています。",
+        content: SITE_DESCRIPTION,
       },
-      { title: "TOMO | フロントエンドエンジニア・デザイナー" },
+      { title: SITE_TITLE },
     ],
     links: [
       { rel: "stylesheet", href: figtreeCss },
@@ -40,7 +42,10 @@ export const Route = createRootRoute({
 function RootComponent() {
   return (
     <RootDocument>
-      <Outlet />
+      <PageLoaderProvider>
+        <PageLoader />
+        <Outlet />
+      </PageLoaderProvider>
     </RootDocument>
   );
 }

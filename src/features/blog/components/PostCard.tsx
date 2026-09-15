@@ -9,7 +9,7 @@ export function PostCard({ post }: { post: PostSummary }) {
       <Link
         to="/blog/$slug"
         params={{ slug: post.slug }}
-        className="group flex min-h-80 cursor-pointer flex-col overflow-hidden rounded-2xl bg-surface text-ink transition-[filter] hover:brightness-[0.98]"
+        className="group h-full flex cursor-pointer flex-col overflow-hidden rounded-2xl bg-surface text-ink"
       >
         {post.cover ? (
           <img
@@ -44,7 +44,7 @@ export function PostCard({ post }: { post: PostSummary }) {
             ) : null}
           </div>
           <span
-            className="mt-8 inline-flex size-11 items-center justify-center self-end rounded-full bg-canvas text-background transition-[filter] group-hover:brightness-110"
+            className="mt-8 inline-flex size-11 items-center justify-center self-end rounded-full bg-canvas text-background transition-transform duration-300 ease-pop group-hover:scale-105"
             aria-hidden="true"
           >
             <ArrowRightIcon className="size-5" />

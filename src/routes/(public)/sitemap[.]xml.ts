@@ -28,7 +28,7 @@ export const Route = createFileRoute("/(public)/sitemap.xml")({
           items.push(...nextPage.items);
         }
         const entries = [
-          `<url><loc>${escapeXml(siteUrl)}</loc></url>`,
+          `<url><loc>${escapeXml(`${siteUrl}/`)}</loc></url>`,
           `<url><loc>${escapeXml(`${siteUrl}/blog`)}</loc></url>`,
           ...items.map(
             (post) =>

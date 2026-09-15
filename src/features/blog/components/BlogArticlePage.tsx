@@ -1,13 +1,16 @@
-import { Link } from "@tanstack/react-router";
-import { ChevronRightIcon } from "@/components/ui/Icons";
+import { ChevronDownIcon, ChevronRightIcon } from "@/components/ui/Icons";
+import { ButtonLink } from "@/components/ui/Button";
+import { AnchorLink, AppLink } from "@/components/ui/Link";
 import type { PostDetail } from "../types/post.types";
 import { ArticleBody } from "./ArticleBody";
 import { BlogContainer } from "./BlogContainer";
 import { formatPostDate } from "./date";
 
 export function BlogArticlePage({ post }: { post: PostDetail }) {
+  const hasTableOfContents = post.tableOfContents.length >= 2;
+
   return (
-    <main className="py-14 sm:py-20">
+    <main className="py-24">
       <BlogContainer>
         <nav
           className="mb-8 text-xs text-muted"
@@ -15,13 +18,13 @@ export function BlogArticlePage({ post }: { post: PostDetail }) {
         >
           <ol className="flex min-w-0 items-center gap-2">
             <li className="shrink-0">
-              <Link
+              <AppLink
                 to="/blog"
                 search={{ page: 1, query: "", tag: "" }}
-                className="font-bold transition-opacity hover:opacity-60"
+                className="font-bold"
               >
                 BLOG
-              </Link>
+              </AppLink>
             </li>
             <li className="shrink-0 text-subtle" aria-hidden="true">
               <ChevronRightIcon className="size-3.5" />
@@ -57,13 +60,13 @@ export function BlogArticlePage({ post }: { post: PostDetail }) {
               <ul className="mt-5 flex flex-wrap gap-2">
                 {post.tags.map((tag) => (
                   <li key={tag.id}>
-                    <Link
+                    <AppLink
                       to="/blog"
                       search={{ page: 1, query: "", tag: tag.slug }}
-                      className="inline-flex text-xs font-bold text-ink transition-opacity hover:opacity-60"
+                      className="inline-flex text-xs font-bold text-ink"
                     >
                       #{tag.name}
-                    </Link>
+                    </AppLink>
                   </li>
                 ))}
               </ul>
@@ -80,29 +83,86 @@ export function BlogArticlePage({ post }: { post: PostDetail }) {
             />
           ) : null}
 
-          <div className="mt-12 grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_15rem]">
-            <ArticleBody html={post.contentHtml} />
-            {post.tableOfContents.length >= 2 ? (
-              <details
-                className="rounded-2xl bg-surface p-5 lg:sticky lg:top-6 lg:open"
-                open
+          <div className="mt-12 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_15rem]">
+            <div className="flex min-w-0 flex-col gap-6">
+              <ArticleBody html={post.contentHtml} />
+              <section
+                className="rounded-2xl bg-surface p-5"
+                aria-labelledby="article-author-title"
               >
-                <summary className="cursor-pointer text-sm font-bold">
-                  目次
-                </summary>
-                <ol className="mt-4 space-y-3 text-sm text-muted">
-                  {post.tableOfContents.map((item) => (
-                    <li
-                      key={item.id}
-                      style={{ paddingLeft: `${(item.level - 2) * 12}px` }}
-                    >
-                      <a href={`#${item.id}`} className="hover:text-ink">
-                        {item.text}
-                      </a>
-                    </li>
-                  ))}
-                </ol>
-              </details>
+                <h2
+                  id="article-author-title"
+                  className="text-sm font-bold text-ink"
+                >
+                  この記事を書いた人
+                </h2>
+
+                <div className="mt-4 flex items-center gap-3">
+                  <div className="size-20 shrink-0 overflow-hidden rounded-full bg-canvas">
+                    <img
+                      src="/img/about-profile.svg"
+                      alt="TOMOのプロフィールイラスト"
+                      width={349}
+                      height={398}
+                      className="size-full object-cover object-top"
+                    />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <p className="font-black">TOMO</p>
+                      <ButtonLink
+                        to="/"
+                        hash="about"
+                        size="sm"
+                        className="shrink-0"
+                      >
+                        プロフィールを見る
+                      </ButtonLink>
+                    </div>
+                    <p className="mt-2 text-xs text-muted">
+                      Web制作会社で、フロントエンドエンジニア・WEBデザイナーとして働いています。
+                    </p>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            {hasTableOfContents ? (
+              <aside className="order-first lg:order-last lg:sticky lg:top-24">
+                <details
+                  className="group rounded-2xl bg-surface p-5"
+                  open
+                >
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-bold text-ink [&::-webkit-details-marker]:hidden">
+                    <span>目次</span>
+                    <ChevronDownIcon
+                      className="size-5 shrink-0 text-ink group-open:rotate-180"
+                      aria-hidden="true"
+                    />
+                  </summary>
+                  <ol className="mt-4 space-y-3 text-sm text-muted">
+                    {post.tableOfContents.map((item) => (
+                      <li
+                        key={item.id}
+                        style={{
+                          paddingLeft: `${(item.level - 2) * 12}px`,
+                        }}
+                      >
+                        <AnchorLink
+                          href={`#${item.id}`}
+                          className={
+                            item.level === 2
+                              ? "font-bold text-ink"
+                              : "text-xs leading-5 text-muted"
+                          }
+                        >
+                          {item.text}
+                        </AnchorLink>
+                      </li>
+                    ))}
+                  </ol>
+                </details>
+              </aside>
             ) : null}
           </div>
         </article>

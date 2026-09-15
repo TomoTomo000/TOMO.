@@ -4,8 +4,10 @@
   "compatibility_date": "2026-08-29",
   "compatibility_flags": ["nodejs_compat"],
   "main": "src/server.ts",
+  "assets": { "binding": "ASSETS" },
   "vars": {
     "APP_ENV": "production",
+    "SITE_URL": "https://tomo-site.tomopage.workers.dev",
     "MICROCMS_SERVICE_DOMAIN": "tomo-site"
   },
   "observability": {
