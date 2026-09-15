@@ -1,8 +1,9 @@
 export const BLOG_OG_WIDTH = 1200;
 export const BLOG_OG_HEIGHT = 630;
+export const BLOG_OG_RENDERER_VERSION = "4";
 
 export function getBlogOgImagePath(slug: string, updatedAt: string): string {
-  return `/og/blog/${encodeURIComponent(slug)}?v=${encodeURIComponent(updatedAt)}`;
+  return `/og/blog/${encodeURIComponent(slug)}?v=${encodeURIComponent(updatedAt)}&renderer=${BLOG_OG_RENDERER_VERSION}`;
 }
 
 // Conservative glyph widths leave room for proportional Latin fonts and punctuation.

@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { findMicroCmsPostSummaryById } from "@/features/blog/server/microcms.repository.server";
 import { renderBlogOgImage } from "@/features/blog/server/og-image.server";
 import { isBlogDataError } from "@/features/blog/server/blog-data.error";
+import { BLOG_OG_RENDERER_VERSION } from "@/features/blog/og-image";
 
 export const Route = createFileRoute("/(public)/og/blog/$slug")({
   server: {
@@ -13,7 +14,7 @@ export const Route = createFileRoute("/(public)/og/blog/$slug")({
           const post = await findMicroCmsPostSummaryById(params.slug);
           if (!post?.publishedAt) return new Response("Not found", { status: 404, headers: errorHeaders });
           const cacheUrl = new URL(request.url);
-          cacheUrl.search = new URLSearchParams({ v: post.updatedAt, renderer: "3" }).toString();
+          cacheUrl.search = new URLSearchParams({ v: post.updatedAt, renderer: BLOG_OG_RENDERER_VERSION }).toString();
           const key = new Request(cacheUrl);
           const cache = await caches.open("blog-og-images-v1");
           const cached = await cache.match(key);
