@@ -1,10 +1,10 @@
 import { describe, expect, test } from "bun:test";
-import { getBlogOgImagePath, layoutOgTitle } from "../src/features/blog/og-image";
+import { BLOG_OG_RENDERER_VERSION, getBlogOgImagePath, layoutOgTitle } from "../src/features/blog/og-image";
 
 describe("article social images", () => {
   test("article updates change the image URL and path characters are encoded", () => {
     expect(getBlogOgImagePath("a/b", "2026-09-15T00:00:00Z"))
-      .toBe("/og/blog/a%2Fb?v=2026-09-15T00%3A00%3A00Z");
+      .toBe(`/og/blog/a%2Fb?v=2026-09-15T00%3A00%3A00Z&renderer=${BLOG_OG_RENDERER_VERSION}`);
     expect(getBlogOgImagePath("article", "first"))
       .not.toBe(getBlogOgImagePath("article", "second"));
   });
@@ -14,6 +14,15 @@ describe("article social images", () => {
     expect(lines).toHaveLength(2);
     expect(lines.some((line) => line.includes("タグ"))).toBe(true);
     expect(lines.some((line) => line.includes("デザイン"))).toBe(true);
+  });
+
+  test("emoji and joined emoji survive title wrapping", () => {
+    const title = "公開しました🎊 開発者👩🏽‍💻からのお知らせ🇯🇵 ❤️";
+    const { lines } = layoutOgTitle(title);
+    expect(lines.join("").replaceAll(" ", "")).toBe(title.replaceAll(" ", ""));
+    for (const emoji of ["🎊", "👩🏽‍💻", "🇯🇵", "❤️"]) {
+      expect(lines.some((line) => line.includes(emoji))).toBe(true);
+    }
   });
 
   test.each([

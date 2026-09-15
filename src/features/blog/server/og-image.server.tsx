@@ -47,6 +47,7 @@ export async function renderBlogOgImage(title: string, request: Request): Promis
     {
       width: BLOG_OG_WIDTH,
       height: BLOG_OG_HEIGHT,
+      emoji: "twemoji",
       fonts: [
         { name: "Figtree", data: latin, weight: 700, style: "normal" },
         { name: "Noto Sans JP", data: japanese, weight: 700, style: "normal" },
