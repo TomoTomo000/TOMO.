@@ -221,6 +221,17 @@ export async function listMicroCmsPosts(input: PostListInput): Promise<Paginated
   };
 }
 
+export async function findMicroCmsPostSummaryById(contentId: string): Promise<PostSummary | null> {
+  if (!contentIdPattern.test(contentId)) return null;
+  const response = await requestMicroCms({
+    endpoint: "blog",
+    contentId,
+    query: new URLSearchParams({ depth: "1", fields: listFields(false) }),
+    schema: postSchema,
+  });
+  return response ? toSummary(response) : null;
+}
+
 export async function findMicroCmsPostById(input: {
   contentId: string;
   draftKey?: string;

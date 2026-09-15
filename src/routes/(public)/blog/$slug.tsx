@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { BlogArticlePage } from "@/features/blog/components/BlogArticlePage";
 import { getPublicPostPageData } from "@/features/blog/server/post.functions";
-import { createSeoHead, DEFAULT_SEO_IMAGE, serializeJsonLd, SITE_DESCRIPTION } from "@/lib/seo";
+import { createSeoHead, serializeJsonLd, SITE_DESCRIPTION } from "@/lib/seo";
+import { BLOG_OG_HEIGHT, BLOG_OG_WIDTH, getBlogOgImagePath } from "@/features/blog/og-image";
 
 export const Route = createFileRoute("/(public)/blog/$slug")({
   loader: ({ params }) => getPublicPostPageData({ data: { slug: params.slug } }),
@@ -9,21 +10,19 @@ export const Route = createFileRoute("/(public)/blog/$slug")({
     if (!loaderData) return {};
     const { post, siteUrl } = loaderData;
     const pageUrl = `${siteUrl}/blog/${encodeURIComponent(post.slug)}`;
-    const imageUrl = post.cover
-      ? new URL(post.cover.displayUrl, siteUrl).href
-      : new URL(DEFAULT_SEO_IMAGE.url, siteUrl).href;
+    const imageUrl = new URL(getBlogOgImagePath(post.slug, post.updatedAt), siteUrl).href;
     const seo = createSeoHead({
       siteUrl,
       path: `/blog/${encodeURIComponent(post.slug)}`,
       title: `${post.title} | TOMO`,
       description: post.excerpt,
       type: "article",
-      image: post.cover ? {
+      image: {
         url: imageUrl,
-        alt: post.cover.altText || post.title,
-        width: post.cover.width,
-        height: post.cover.height,
-      } : undefined,
+        alt: post.title,
+        width: BLOG_OG_WIDTH,
+        height: BLOG_OG_HEIGHT,
+      },
     });
     const structuredData = serializeJsonLd({
       "@context": "https://schema.org",
