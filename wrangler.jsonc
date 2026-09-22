@@ -8,8 +8,19 @@
   "vars": {
     "APP_ENV": "production",
     "SITE_URL": "https://tomo-site.tomopage.workers.dev",
-    "MICROCMS_SERVICE_DOMAIN": "tomo-site"
+    "MICROCMS_SERVICE_DOMAIN": "tomo-site",
+    "CONTACT_FROM_EMAIL": "TOMO Website <onboarding@resend.dev>"
   },
+  "ratelimits": [
+    {
+      "name": "CONTACT_RATE_LIMITER",
+      "namespace_id": "20260921",
+      "simple": {
+        "limit": 5,
+        "period": 60
+      }
+    }
+  ],
   "observability": {
     "enabled": true,
     "logs": {

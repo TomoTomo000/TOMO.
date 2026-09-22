@@ -1,22 +1,75 @@
 import { Link } from "@tanstack/react-router";
-import { ButtonLink } from "@/components/ui/Button";
+import { Button, ButtonLink } from "@/components/ui/Button";
+import {
+  SelectField,
+  TextareaField,
+  TextField,
+} from "@/components/ui/FormField";
 import { IconButton } from "@/components/ui/IconButton";
 import { ArrowDownIcon } from "@/components/ui/Icons";
 import { AppLink } from "@/components/ui/Link";
 import type { PostSummary } from "@/features/blog/types/post.types";
 import { PostCard } from "@/features/blog/components/PostCard";
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { usePageLoader } from "@/features/page-loader/usePageLoader";
+import { useContactTurnstile } from "@/features/contact/useContactTurnstile";
+
+const TURNSTILE_SITE_KEY = import.meta.env.DEV
+  ? "1x00000000000000000000AA"
+  : "0x4AAAAAAE-rObFDOjPxEuUD";
 
 const navItems = [
   { label: "About", href: "#about" },
   { label: "Blog", href: "#blog" },
-  // { label: "Contact", href: "#contact" },
+  { label: "Contact", href: "#contact" },
 ];
 
 export function PortfolioPage({ blogPosts }: { blogPosts: PostSummary[] }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [contactStatus, setContactStatus] = useState<
+    "idle" | "submitting" | "success" | "error"
+  >("idle");
   const { state: loaderState } = usePageLoader();
+  const {
+    containerRef: turnstileContainerRef,
+    error: turnstileError,
+    verified: turnstileVerified,
+    reset: resetTurnstile,
+  } = useContactTurnstile(TURNSTILE_SITE_KEY);
+
+  const handleContactSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (contactStatus === "submitting" || !turnstileVerified) return;
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    setContactStatus("submitting");
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.get("name"),
+          email: formData.get("email"),
+          budget: formData.get("budget"),
+          message: formData.get("message"),
+          turnstileToken: formData.get("cf-turnstile-response"),
+        }),
+      });
+
+      if (response.ok) {
+        form.reset();
+        setContactStatus("success");
+      } else {
+        setContactStatus("error");
+      }
+    } catch {
+      setContactStatus("error");
+    } finally {
+      resetTurnstile();
+    }
+  };
 
   return (
     <div
@@ -245,7 +298,7 @@ export function PortfolioPage({ blogPosts }: { blogPosts: PostSummary[] }) {
             )}
           </section>
 
-          {/* <section
+          <section
             id="contact"
             className="scroll-mt-2 rounded-3xl bg-background px-6 py-20 sm:px-8 sm:py-24"
             aria-labelledby="contact-title"
@@ -274,6 +327,7 @@ export function PortfolioPage({ blogPosts }: { blogPosts: PostSummary[] }) {
                   type="text"
                   autoComplete="name"
                   placeholder="例）山田 太郎"
+                  maxLength={100}
                   required
                 />
                 <TextField
@@ -283,6 +337,7 @@ export function PortfolioPage({ blogPosts }: { blogPosts: PostSummary[] }) {
                   type="email"
                   autoComplete="email"
                   placeholder="例）tomo@example.com"
+                  maxLength={254}
                   required
                 />
                 <SelectField
@@ -306,19 +361,46 @@ export function PortfolioPage({ blogPosts }: { blogPosts: PostSummary[] }) {
                   name="message"
                   label="お問い合わせ内容"
                   placeholder="ご相談内容やご依頼の概要をご記入ください"
+                  minLength={10}
+                  maxLength={5000}
                   required
                 />
+
+                <div
+                  ref={turnstileContainerRef}
+                  className="w-full min-w-0 empty:hidden"
+                />
+                {turnstileError ? (
+                  <p role="alert" className="text-sm leading-7 text-ink">
+                    認証を読み込めませんでした。通信環境を確認してページを再読み込みしてください。
+                  </p>
+                ) : null}
               </div>
 
-              <Button
-                type="submit"
-                size="lg"
-                className="mx-auto mt-10 w-full max-w-56"
-              >
-                送信する
-              </Button>
+              {contactStatus === "success" || contactStatus === "error" ? (
+                <p
+                  className="mt-8 text-center text-sm leading-7 text-ink"
+                  role={contactStatus === "error" ? "alert" : "status"}
+                  aria-live="polite"
+                >
+                  {contactStatus === "success"
+                    ? "お問い合わせを受け付けました。2〜3営業日以内にご返信します。"
+                    : "送信できませんでした。時間をおいてもう一度お試しください。"}
+                </p>
+              ) : null}
+
+              <div className="mt-10 mx-auto max-w-56">
+                <Button
+                  type="submit"
+                  size="lg"
+                  className="w-full"
+                  disabled={contactStatus === "submitting" || !turnstileVerified}
+                >
+                  {contactStatus === "submitting" ? "送信中…" : "送信する"}
+                </Button>
+              </div>
             </form>
-          </section> */}
+          </section>
 
           <footer className="px-6 py-14 text-background sm:px-8">
             <div className="flex flex-col items-center gap-4 text-center">

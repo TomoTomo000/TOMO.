@@ -29,6 +29,8 @@
     "@cloudflare/vite-plugin": "^1.54.2",
     "@eslint/js": "^10.0.1",
     "@tailwindcss/vite": "^4.3.3",
+    "@types/bun": "^1.4.2",
+    "@types/cloudflare-turnstile": "^0.2.2",
     "@types/node": "^20.19.43",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
