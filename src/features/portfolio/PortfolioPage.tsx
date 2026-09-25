@@ -1,22 +1,100 @@
 import { Link } from "@tanstack/react-router";
-import { ButtonLink } from "@/components/ui/Button";
+import { Button, ButtonLink } from "@/components/ui/Button";
+import {
+  FieldCount,
+  SelectField,
+  TextareaField,
+  TextField,
+} from "@/components/ui/FormField";
 import { IconButton } from "@/components/ui/IconButton";
 import { ArrowDownIcon } from "@/components/ui/Icons";
 import { AppLink } from "@/components/ui/Link";
+import { toast } from "sonner";
 import type { PostSummary } from "@/features/blog/types/post.types";
 import { PostCard } from "@/features/blog/components/PostCard";
-import { useState } from "react";
+import { useRef, useState, type SubmitEvent } from "react";
 import { usePageLoader } from "@/features/page-loader/usePageLoader";
+import { useContactTurnstile } from "@/features/contact/useContactTurnstile";
+import { contactSchema } from "@/features/contact/contact.schema";
+import { budgetLabels } from "@/features/contact/contact.constants";
+
+const nameSchema = contactSchema.shape.name;
+const emailInputSchema = contactSchema.shape.email.in;
+const messageSchema = contactSchema.shape.message;
+
+const TURNSTILE_SITE_KEY = import.meta.env.DEV
+  ? "1x00000000000000000000AA"
+  : "0x4AAAAAAE-rObFDOjPxEuUD";
 
 const navItems = [
   { label: "About", href: "#about" },
   { label: "Blog", href: "#blog" },
-  // { label: "Contact", href: "#contact" },
+  { label: "Contact", href: "#contact" },
 ];
 
 export function PortfolioPage({ blogPosts }: { blogPosts: PostSummary[] }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [contactMessage, setContactMessage] = useState("");
+  const [contactName, setContactName] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const contactSubmission = useRef<{ content: string; id: string } | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { state: loaderState } = usePageLoader();
+  const {
+    containerRef: turnstileContainerRef,
+    error: turnstileError,
+    verified: turnstileVerified,
+    reset: resetTurnstile,
+  } = useContactTurnstile(TURNSTILE_SITE_KEY);
+
+  const handleContactSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (isSubmitting || !turnstileVerified) return;
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    setIsSubmitting(true);
+    toast.dismiss("contact-submit");
+
+    try {
+      const fields = {
+        name: String(formData.get("name") ?? "").trim(),
+        email: String(formData.get("email") ?? "").trim(),
+        budget: formData.get("budget"),
+        message: String(formData.get("message") ?? "").trim(),
+      };
+      const content = JSON.stringify(fields);
+      // 再送時は同じIDを使う。Turnstileトークンの更新は内容の変更に含めない。
+      if (contactSubmission.current?.content !== content) {
+        contactSubmission.current = { content, id: crypto.randomUUID() };
+      }
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...fields,
+          submissionId: contactSubmission.current.id,
+          turnstileToken: formData.get("cf-turnstile-response"),
+        }),
+      });
+
+      if (!response.ok) throw new Error("Contact submission failed");
+
+      contactSubmission.current = null;
+      form.reset();
+      setContactMessage("");
+      setContactName("");
+      setContactEmail("");
+      toast.success("お問い合わせを受け付けました。2〜3営業日以内にご返信します。", { id: "contact-submit" });
+    } catch {
+      toast.error("送信できませんでした。時間をおいてもう一度お試しください。", {
+        id: "contact-submit",
+      });
+    } finally {
+      setIsSubmitting(false);
+      resetTurnstile();
+    }
+  };
 
   return (
     <div
@@ -132,7 +210,7 @@ export function PortfolioPage({ blogPosts }: { blogPosts: PostSummary[] }) {
         </aside>
 
         <main
-          className="min-w-0 space-y-2 p-2 pt-0 lg:h-full lg:overflow-y-auto lg:overscroll-contain lg:p-0 lg:[scrollbar-color:#F7F0E7_transparent] lg:[scrollbar-width:auto] lg:[&::-webkit-scrollbar]:w-3.5 lg:[&::-webkit-scrollbar-track]:bg-transparent lg:[&::-webkit-scrollbar-thumb]:rounded-full lg:[&::-webkit-scrollbar-thumb]:border-[3px] lg:[&::-webkit-scrollbar-thumb]:border-solid lg:[&::-webkit-scrollbar-thumb]:border-transparent lg:[&::-webkit-scrollbar-thumb]:bg-background lg:[&::-webkit-scrollbar-thumb]:bg-clip-content lg:[&::-webkit-scrollbar-thumb:hover]:bg-footer-muted"
+          className="min-w-0 space-y-2 p-2 pt-0 lg:h-full lg:overflow-y-auto lg:overscroll-contain lg:p-0 lg:[scrollbar-color:#F7F0E7_transparent] lg:[scrollbar-width:auto] lg:[&::-webkit-scrollbar]:w-3.5 lg:[&::-webkit-scrollbar-track]:bg-transparent lg:[&::-webkit-scrollbar-thumb]:rounded-full lg:[&::-webkit-scrollbar-thumb]:border-[3px] lg:[&::-webkit-scrollbar-thumb]:border-solid lg:[&::-webkit-scrollbar-thumb]:border-transparent lg:[&::-webkit-scrollbar-thumb]:bg-background lg:[&::-webkit-scrollbar-thumb]:bg-clip-content lg:[&::-webkit-scrollbar-thumb:hover]:bg-background/70"
           aria-label="メインコンテンツ"
         >
           <section
@@ -245,7 +323,7 @@ export function PortfolioPage({ blogPosts }: { blogPosts: PostSummary[] }) {
             )}
           </section>
 
-          {/* <section
+          <section
             id="contact"
             className="scroll-mt-2 rounded-3xl bg-background px-6 py-20 sm:px-8 sm:py-24"
             aria-labelledby="contact-title"
@@ -267,24 +345,58 @@ export function PortfolioPage({ blogPosts }: { blogPosts: PostSummary[] }) {
               className="mt-12 rounded-2xl bg-surface p-6 sm:p-8"
             >
               <div className="grid gap-y-8">
-                <TextField
-                  id="name"
-                  name="name"
-                  label="お名前"
-                  type="text"
-                  autoComplete="name"
-                  placeholder="例）山田 太郎"
-                  required
-                />
-                <TextField
-                  id="email"
-                  name="email"
-                  label="メールアドレス"
-                  type="email"
-                  autoComplete="email"
-                  placeholder="例）tomo@example.com"
-                  required
-                />
+                <div>
+                  <TextField
+                    id="name"
+                    name="name"
+                    label="お名前"
+                    type="text"
+                    autoComplete="name"
+                    placeholder="例）山田 太郎"
+                    value={contactName}
+                    onChange={(event) => {
+                      const value = event.currentTarget.value;
+                      const length = value.trim().length;
+                      setContactName(value);
+                      event.currentTarget.setCustomValidity(
+                        length < (nameSchema.minLength ?? 0)
+                          ? "お名前を入力してください"
+                          : length > (nameSchema.maxLength ?? Infinity)
+                            ? `お名前は${(nameSchema.maxLength ?? Infinity)}文字以内で入力してください`
+                            : "",
+                      );
+                    }}
+                    aria-describedby="name-count"
+                    required
+                  />
+                  <FieldCount id="name-count" value={contactName} min={nameSchema.minLength ?? 0} max={nameSchema.maxLength ?? Infinity} />
+                </div>
+                <div>
+                  <TextField
+                    id="email"
+                    name="email"
+                    label="メールアドレス"
+                    type="email"
+                    autoComplete="email"
+                    placeholder="例）tomo@example.com"
+                    value={contactEmail}
+                    onChange={(event) => {
+                      const value = event.currentTarget.value;
+                      const length = value.trim().length;
+                      setContactEmail(value);
+                      event.currentTarget.setCustomValidity(
+                        length < (emailInputSchema.minLength ?? 0)
+                          ? "メールアドレスを入力してください"
+                          : length > (emailInputSchema.maxLength ?? Infinity)
+                            ? `メールアドレスは${(emailInputSchema.maxLength ?? Infinity)}文字以内で入力してください`
+                            : "",
+                      );
+                    }}
+                    aria-describedby="email-count"
+                    required
+                  />
+                  <FieldCount id="email-count" value={contactEmail} min={emailInputSchema.minLength ?? 0} max={emailInputSchema.maxLength ?? Infinity} />
+                </div>
                 <SelectField
                   id="budget"
                   name="budget"
@@ -295,30 +407,63 @@ export function PortfolioPage({ blogPosts }: { blogPosts: PostSummary[] }) {
                   <option value="">
                     選択してください
                   </option>
-                  <option value="under-100000">〜10万円</option>
-                  <option value="100000-300000">10〜30万円</option>
-                  <option value="300000-500000">30〜50万円</option>
-                  <option value="over-500000">50万円〜</option>
-                  <option value="undecided">未定・相談したい</option>
+                  {contactSchema.shape.budget.options.map((value) => (
+                    <option key={value} value={value}>
+                      {budgetLabels[value]}
+                    </option>
+                  ))}
                 </SelectField>
-                <TextareaField
-                  id="message"
-                  name="message"
-                  label="お問い合わせ内容"
-                  placeholder="ご相談内容やご依頼の概要をご記入ください"
-                  required
+                <div>
+                  <TextareaField
+                    id="message"
+                    name="message"
+                    label="お問い合わせ内容"
+                    placeholder="ご相談内容やご依頼の概要をご記入ください"
+                    value={contactMessage}
+                    onChange={(event) => {
+                      const value = event.currentTarget.value;
+                      const length = value.trim().length;
+                      setContactMessage(value);
+                      event.currentTarget.setCustomValidity(
+                        length < (messageSchema.minLength ?? 0)
+                          ? `お問い合わせ内容は${(messageSchema.minLength ?? 0)}文字以上で入力してください`
+                          : length > (messageSchema.maxLength ?? Infinity)
+                            ? `お問い合わせ内容は${(messageSchema.maxLength ?? Infinity)}文字以内で入力してください`
+                            : "",
+                      );
+                    }}
+                    minLength={(messageSchema.minLength ?? 0)}
+                    aria-describedby="message-count"
+                    required
+                  />
+                  <FieldCount id="message-count" value={contactMessage} min={messageSchema.minLength ?? 0} max={messageSchema.maxLength ?? Infinity} />
+                </div>
+
+                <div
+                  ref={turnstileContainerRef}
+                  className="w-full min-w-0 empty:hidden"
                 />
+                {turnstileError ? (
+                  <p role="alert" className="text-sm leading-7 text-ink">
+                    {turnstileError === "unsupported"
+                      ? "お使いのブラウザーでは認証できません。ブラウザーを最新版に更新するか、別のブラウザーでお試しください。"
+                      : "認証を読み込めませんでした。通信環境を確認してページを再読み込みしてください。"}
+                  </p>
+                ) : null}
               </div>
 
-              <Button
-                type="submit"
-                size="lg"
-                className="mx-auto mt-10 w-full max-w-56"
-              >
-                送信する
-              </Button>
+              <div className="mt-10 mx-auto max-w-56">
+                <Button
+                  type="submit"
+                  size="lg"
+                  className="w-full"
+                  disabled={isSubmitting || !turnstileVerified}
+                >
+                  {isSubmitting ? "送信中…" : "送信する"}
+                </Button>
+              </div>
             </form>
-          </section> */}
+          </section>
 
           <footer className="px-6 py-14 text-background sm:px-8">
             <div className="flex flex-col items-center gap-4 text-center">

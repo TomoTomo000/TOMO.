@@ -9,7 +9,7 @@ export function getSiteUrl(request: Request): string {
         return url.origin;
       }
     } catch {
-      // Fall back to the request origin when configuration is incomplete.
+      // 設定が不完全な場合は、リクエストのオリジンを使用する。
     }
   }
 

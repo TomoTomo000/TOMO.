@@ -8,6 +8,8 @@
 - Tailwind CSS
 - microCMS（記事・タグ・画像）
 - Cloudflare Workers（Webアプリの配信）
+- Resend（お問い合わせ通知メール）
+- Cloudflare Turnstile（お問い合わせのボット対策）
 
 ## コマンド
 

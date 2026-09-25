@@ -6,7 +6,7 @@ export function getBlogOgImagePath(slug: string, updatedAt: string): string {
   return `/og/blog/${encodeURIComponent(slug)}?v=${encodeURIComponent(updatedAt)}&renderer=${BLOG_OG_RENDERER_VERSION}`;
 }
 
-// Conservative glyph widths leave room for proportional Latin fonts and punctuation.
+// 欧文フォントの文字幅の違いや句読点を考慮し、文字幅を広めに見積もる。
 export function layoutOgTitle(title: string) {
   const text = title.replace(/\s+/gu, " ").trim();
   const graphemes = (value: string) => [...new Intl.Segmenter("ja", { granularity: "grapheme" }).segment(value)]

@@ -14,6 +14,7 @@ import { Route as publicBlogRouteRouteImport } from './routes/(public)/blog/rout
 import { Route as publicFeedDotxmlRouteImport } from './routes/(public)/feed[.]xml'
 import { Route as publicRobotsDottxtRouteImport } from './routes/(public)/robots[.]txt'
 import { Route as publicSitemapDotxmlRouteImport } from './routes/(public)/sitemap[.]xml'
+import { Route as publicApiContactRouteImport } from './routes/(public)/api.contact'
 import { Route as publicBlogIndexRouteImport } from './routes/(public)/blog/index'
 import { Route as publicBlogSlugRouteImport } from './routes/(public)/blog/$slug'
 import { Route as publicBlogPreviewContentIdRouteImport } from './routes/(public)/blog/preview/$contentId'
@@ -44,6 +45,11 @@ const publicSitemapDotxmlRoute = publicSitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const publicApiContactRoute = publicApiContactRouteImport.update({
+  id: '/(public)/api/contact',
+  path: '/api/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const publicBlogIndexRoute = publicBlogIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -72,6 +78,7 @@ export interface FileRoutesByFullPath {
   '/robots.txt': typeof publicRobotsDottxtRoute
   '/sitemap.xml': typeof publicSitemapDotxmlRoute
   '/': typeof publicIndexRoute
+  '/api/contact': typeof publicApiContactRoute
   '/blog/$slug': typeof publicBlogSlugRoute
   '/blog/': typeof publicBlogIndexRoute
   '/blog/preview/$contentId': typeof publicBlogPreviewContentIdRoute
@@ -82,6 +89,7 @@ export interface FileRoutesByTo {
   '/robots.txt': typeof publicRobotsDottxtRoute
   '/sitemap.xml': typeof publicSitemapDotxmlRoute
   '/': typeof publicIndexRoute
+  '/api/contact': typeof publicApiContactRoute
   '/blog/$slug': typeof publicBlogSlugRoute
   '/blog': typeof publicBlogIndexRoute
   '/blog/preview/$contentId': typeof publicBlogPreviewContentIdRoute
@@ -94,6 +102,7 @@ export interface FileRoutesById {
   '/(public)/robots.txt': typeof publicRobotsDottxtRoute
   '/(public)/sitemap.xml': typeof publicSitemapDotxmlRoute
   '/(public)/': typeof publicIndexRoute
+  '/(public)/api/contact': typeof publicApiContactRoute
   '/(public)/blog/$slug': typeof publicBlogSlugRoute
   '/(public)/blog/': typeof publicBlogIndexRoute
   '/(public)/blog/preview/$contentId': typeof publicBlogPreviewContentIdRoute
@@ -107,6 +116,7 @@ export interface FileRouteTypes {
     | '/robots.txt'
     | '/sitemap.xml'
     | '/'
+    | '/api/contact'
     | '/blog/$slug'
     | '/blog/'
     | '/blog/preview/$contentId'
@@ -117,6 +127,7 @@ export interface FileRouteTypes {
     | '/robots.txt'
     | '/sitemap.xml'
     | '/'
+    | '/api/contact'
     | '/blog/$slug'
     | '/blog'
     | '/blog/preview/$contentId'
@@ -128,6 +139,7 @@ export interface FileRouteTypes {
     | '/(public)/robots.txt'
     | '/(public)/sitemap.xml'
     | '/(public)/'
+    | '/(public)/api/contact'
     | '/(public)/blog/$slug'
     | '/(public)/blog/'
     | '/(public)/blog/preview/$contentId'
@@ -140,6 +152,7 @@ export interface RootRouteChildren {
   publicRobotsDottxtRoute: typeof publicRobotsDottxtRoute
   publicSitemapDotxmlRoute: typeof publicSitemapDotxmlRoute
   publicIndexRoute: typeof publicIndexRoute
+  publicApiContactRoute: typeof publicApiContactRoute
   publicOgBlogSlugRoute: typeof publicOgBlogSlugRoute
 }
 
@@ -178,6 +191,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof publicSitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(public)/api/contact': {
+      id: '/(public)/api/contact'
+      path: '/api/contact'
+      fullPath: '/api/contact'
+      preLoaderRoute: typeof publicApiContactRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(public)/blog/': {
@@ -233,6 +253,7 @@ const rootRouteChildren: RootRouteChildren = {
   publicRobotsDottxtRoute: publicRobotsDottxtRoute,
   publicSitemapDotxmlRoute: publicSitemapDotxmlRoute,
   publicIndexRoute: publicIndexRoute,
+  publicApiContactRoute: publicApiContactRoute,
   publicOgBlogSlugRoute: publicOgBlogSlugRoute,
 }
 export const routeTree = rootRouteImport

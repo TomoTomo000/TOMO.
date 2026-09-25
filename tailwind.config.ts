@@ -11,10 +11,9 @@ const config: Config = {
         canvas: "#2A1915",
         ink: "#2A1915",
         surface: "#FFFDF9",
-        "terracotta-dark": "#9F452F",
         muted: "#68544C",
-        subtle: "#806A60",
         "footer-muted": "#BCA79D",
+        important: "#E74C3C",
       },
       fontFamily: {
         sans: [

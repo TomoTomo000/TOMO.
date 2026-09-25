@@ -12,7 +12,7 @@ async function fetchFont(family: string, text: string): Promise<ArrayBuffer> {
   if (cached) return cached.arrayBuffer();
 
   const css = await fetch(url, {
-    // Request TTF: Satori does not support WOFF2.
+    // SatoriはWOFF2に対応していないため、TTFを取得する。
     headers: { "User-Agent": "Mozilla/5.0" },
     signal: AbortSignal.timeout(8_000),
   });
@@ -54,6 +54,6 @@ export async function renderBlogOgImage(title: string, request: Request): Promis
       ],
     },
   );
-  // Consume the render stream here so failures return an error, never a broken cached PNG.
+  // ここで描画ストリームを読み切り、失敗時は壊れたPNGをキャッシュせずエラーを返す。
   return response.arrayBuffer();
 }
