@@ -26,7 +26,7 @@ export function BlogArticlePage({ post }: { post: PostDetail }) {
                 BLOG
               </AppLink>
             </li>
-            <li className="shrink-0 text-subtle" aria-hidden="true">
+            <li className="shrink-0 text-muted" aria-hidden="true">
               <ChevronRightIcon className="size-3.5" />
             </li>
             <li
@@ -47,7 +47,7 @@ export function BlogArticlePage({ post }: { post: PostDetail }) {
             {post.excerpt ? (
               <p className="mt-6 leading-8 text-muted">{post.excerpt}</p>
             ) : null}
-            <div className="mt-7 flex flex-wrap gap-x-5 gap-y-2 text-xs text-subtle">
+            <div className="mt-7 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted">
               <time dateTime={post.publishedAt ?? undefined}>
                 公開 {formatPostDate(post.publishedAt)}
               </time>

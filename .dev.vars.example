@@ -9,5 +9,5 @@ MICROCMS_PREVIEW_SECRET=
 CONTACT_FROM_EMAIL=TOMO Website <onboarding@resend.dev>
 CONTACT_TO_EMAIL=
 RESEND_API_KEY=
-# Cloudflare公式のローカルテスト用Secret key
+# Cloudflare公式のローカルテスト用シークレットキー
 TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA

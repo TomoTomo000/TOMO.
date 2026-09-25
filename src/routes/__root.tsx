@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Toaster } from "sonner";
 import {
   HeadContent,
   Outlet,
@@ -58,6 +59,15 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       </head>
       <body className="flex min-h-full flex-col font-sans font-medium">
         {children}
+        <Toaster
+          position="bottom-left"
+          style={{ fontFamily: "inherit" }}
+          richColors
+          closeButton
+          duration={5000}
+          containerAriaLabel="通知"
+          toastOptions={{ closeButtonAriaLabel: "通知を閉じる" }}
+        />
         <Scripts />
       </body>
     </html>

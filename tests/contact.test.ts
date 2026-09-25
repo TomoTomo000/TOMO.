@@ -7,6 +7,7 @@ import {
 import type { ContactInput } from "@/features/contact/contact.schema";
 
 const validInput = {
+  submissionId: "9c56d0e4-a1c2-4f8a-9b32-7788c38b7c21",
   name: "山田 太郎",
   email: "taro@example.com",
   budget: "100000-300000",
@@ -112,7 +113,46 @@ describe("contact API", () => {
     });
   });
 
-  test("rejects invalid input", async () => {
+  test("reuses the email key and body after a timeout with a fresh Turnstile token", async () => {
+    const emails: Array<{ key: string | null; body: string }> = [];
+    const tokens: Array<string | null> = [];
+    const fetcher = async (input: RequestInfo | URL, init?: RequestInit) => {
+      if (String(input).includes("siteverify")) {
+        tokens.push(new URLSearchParams(String(init?.body)).get("response"));
+        return Response.json({
+          success: true,
+          hostname: "tomo-site.tomopage.workers.dev",
+          action: "contact_submit",
+        });
+      }
+      emails.push({
+        key: new Headers(init?.headers).get("Idempotency-Key"),
+        body: String(init?.body),
+      });
+      if (emails.length === 1) throw new DOMException("Timed out", "TimeoutError");
+      return Response.json({ id: "email-id" });
+    };
+
+    const first = await handleContactRequest(createRequest(), createEnvironment(), fetcher);
+    const retry = await handleContactRequest(
+      createRequest({ ...validInput, turnstileToken: "fresh-token" }),
+      createEnvironment(),
+      fetcher,
+    );
+
+    expect(first.status).toBe(500);
+    expect(retry.status).toBe(200);
+    expect(tokens).toEqual(["valid-token", "fresh-token"]);
+    expect(emails).toHaveLength(2);
+    expect(emails[0]?.key).toBe(`contact/${validInput.submissionId}`);
+    expect(emails[1]).toEqual(emails[0]);
+  });
+
+  test.each([
+    { email: "invalid" },
+    { submissionId: undefined },
+    { submissionId: "invalid" },
+  ])("rejects invalid input: %j", async (invalidFields) => {
     let fetchCount = 0;
     const fetcher = async () => {
       fetchCount += 1;
@@ -120,7 +160,7 @@ describe("contact API", () => {
     };
 
     const response = await handleContactRequest(
-      createRequest({ ...validInput, email: "invalid" }),
+      createRequest({ ...validInput, ...invalidFields }),
       createEnvironment(),
       fetcher,
     );

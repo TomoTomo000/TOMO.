@@ -1,4 +1,5 @@
-import { budgetLabels, contactSchema, type ContactInput } from "./contact.schema";
+import { contactSchema, type ContactInput } from "./contact.schema";
+import { budgetLabels } from "./contact.constants";
 
 const TURNSTILE_ACTION = "contact_submit";
 const TURNSTILE_TEST_SECRET_KEY = "1x0000000000000000000000000000000AA";
@@ -108,8 +109,8 @@ async function verifyTurnstile(
     };
     if (result.success !== true) return false;
 
-    // Dummy responses do not represent the form's hostname or action.
-    // Only use success alone with the official test secret in local development.
+    // テスト用の応答には、実際のフォームのhostnameやactionが反映されない。
+    // ローカル開発で公式テスト用シークレットキーを使う場合のみ、successだけで判定する。
     if (configuration.allowTestKey) {
       return true;
     }
@@ -146,6 +147,7 @@ async function sendContactEmail(
       headers: {
         Authorization: `Bearer ${configuration.resendApiKey}`,
         "Content-Type": "application/json",
+        "Idempotency-Key": `contact/${input.submissionId}`,
       },
       body: JSON.stringify({
         from: configuration.fromEmail,

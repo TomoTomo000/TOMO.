@@ -15,7 +15,7 @@ function FieldLabel({ htmlFor, label, required }: FieldLabelProps) {
     <label className="text-sm font-bold" htmlFor={htmlFor}>
       {label}
       {required ? (
-        <span className="ml-1 text-terracotta-dark" aria-hidden="true">
+        <span className="ml-1 text-important" aria-hidden="true">
           *
         </span>
       ) : null}
@@ -36,6 +36,29 @@ function FieldError({ id, children }: FieldErrorProps) {
   return (
     <p id={id} className="mt-2 text-xs text-ink" role="alert">
       {children}
+    </p>
+  );
+}
+
+type FieldCountProps = {
+  id: string;
+  value: string;
+  min: number;
+  max: number;
+};
+
+export function FieldCount({ id, value, min, max }: FieldCountProps) {
+  const count = value.trim().length;
+  const invalid = count > 0 && (count < min || count > max);
+
+  return (
+    <p
+      id={id}
+      className={`mt-2 text-left text-xs tabular-nums ${
+        invalid ? "text-important" : "text-muted"
+      }`}
+    >
+      {count} / {max}文字{min > 1 ? `（${min}文字以上）` : ""}
     </p>
   );
 }

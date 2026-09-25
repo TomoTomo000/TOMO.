@@ -10,7 +10,7 @@ export const Route = createFileRoute("/(public)/og/blog/$slug")({
       GET: async ({ params, request }) => {
         const errorHeaders = { "Cache-Control": "no-store", "X-Robots-Tag": "noindex" };
         try {
-          // Do not accept draft keys or arbitrary title parameters on this public endpoint.
+          // 公開エンドポイントでは、下書きキーや任意のタイトルをパラメーターとして受け付けない。
           const post = await findMicroCmsPostSummaryById(params.slug);
           if (!post?.publishedAt) return new Response("Not found", { status: 404, headers: errorHeaders });
           const cacheUrl = new URL(request.url);

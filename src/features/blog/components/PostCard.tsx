@@ -25,7 +25,7 @@ export function PostCard({ post }: { post: PostSummary }) {
           <div className="flex justify-end text-sm font-bold">
             <time
               dateTime={post.publishedAt ?? undefined}
-              className="text-xs font-medium text-subtle"
+              className="text-xs font-medium text-muted"
             >
               {formatPostDate(post.publishedAt)}
             </time>

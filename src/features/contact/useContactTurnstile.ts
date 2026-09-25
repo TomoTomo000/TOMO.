@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 export function useContactTurnstile(sitekey: string) {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetRef = useRef<string | null>(null);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<"load" | "unsupported" | null>(null);
   const [verified, setVerified] = useState(false);
 
   useEffect(() => {
@@ -14,13 +14,14 @@ export function useContactTurnstile(sitekey: string) {
     let script: HTMLScriptElement | undefined;
     const fail = () => {
       if (disposed) return;
-      setError(true);
+      setError((current) => current === "unsupported" ? current : "load");
       setVerified(false);
     };
     const timeout = window.setTimeout(fail, 15_000);
     const render = () => {
       if (disposed || typeof turnstile === "undefined") return;
       try {
+        setError(null);
         widgetRef.current = turnstile.render(container, {
           sitekey,
           action: "contact_submit",
@@ -28,10 +29,16 @@ export function useContactTurnstile(sitekey: string) {
           callback: () => {
             if (disposed) return;
             window.clearTimeout(timeout);
-            setError(false);
+            setError(null);
             setVerified(true);
           },
           "error-callback": fail,
+          "unsupported-callback": () => {
+            if (disposed) return;
+            window.clearTimeout(timeout);
+            setError("unsupported");
+            setVerified(false);
+          },
           "expired-callback": () => {
             if (!disposed) setVerified(false);
           },
@@ -41,7 +48,6 @@ export function useContactTurnstile(sitekey: string) {
           fail();
         } else {
           window.clearTimeout(timeout);
-          setError(false);
         }
       } catch {
         fail();

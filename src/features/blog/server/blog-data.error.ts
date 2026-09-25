@@ -45,7 +45,7 @@ export function throwBlogDataError(
   code: BlogDataErrorCode,
   status: 502 | 503,
 ): never {
-  // Do not log request URLs or caught errors here. Preview URLs contain secrets.
+  // プレビューURLには秘密情報が含まれるため、リクエストURLや捕捉したエラーはログに出さない。
   console.error(`[blog:data] ${code}`);
   throw new BlogDataError(code, status);
 }
