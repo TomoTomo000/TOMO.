@@ -27,7 +27,7 @@ export function BlogListPage({
   const navigate = useNavigate();
 
   return (
-    <main className="py-24">
+    <main className="py-12">
       <BlogContainer>
         <div className="text-center">
           <h1 className="text-5xl font-black sm:text-6xl">BLOG</h1>
