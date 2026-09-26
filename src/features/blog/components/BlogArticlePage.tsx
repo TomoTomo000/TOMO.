@@ -10,7 +10,7 @@ export function BlogArticlePage({ post }: { post: PostDetail }) {
   const hasTableOfContents = post.tableOfContents.length >= 2;
 
   return (
-    <main className="py-24">
+    <main className="py-12">
       <BlogContainer>
         <nav
           className="mb-8 text-xs text-muted"

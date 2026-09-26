@@ -9,7 +9,7 @@ export function BlogLayout() {
 
   return (
     <div className="min-h-screen bg-background text-ink">
-      <header className="pointer-events-none fixed inset-x-0 top-0 z-50 px-4 pt-4 lg:hidden">
+      <header className="pointer-events-none sticky top-0 z-50 px-4 pt-4 lg:hidden">
         <div className="flex items-start justify-between gap-4">
           <AppLink
             to="/blog"
@@ -83,14 +83,14 @@ export function BlogLayout() {
         </nav>
       </div>
 
-      <header className="sticky top-0 z-50 hidden border-b border-ink/10 bg-background py-3 lg:block">
-        <BlogContainer className="flex items-center justify-between gap-4">
+      <header className="pointer-events-none sticky top-0 z-50 hidden px-9 pt-9 lg:block">
+        <div className="flex items-start justify-between gap-4">
           <AppLink
             to="/blog"
             search={{ page: 1, query: "", tag: "" }}
             reloadDocument
             variant="control"
-            className="text-xl font-black"
+            className="pointer-events-auto inline-flex h-12 items-center rounded-full bg-background px-5 text-xl font-black text-ink"
             aria-label="TOMO ブログ一覧"
           >
             TOMO.
@@ -101,14 +101,14 @@ export function BlogLayout() {
               <li>
                 <Link
                   to="/"
-                  className="block rounded-full px-5 py-3 text-sm font-black uppercase transition-colors hover:bg-canvas hover:text-background"
+                  className="pointer-events-auto inline-flex h-12 items-center rounded-full bg-background px-5 text-sm font-black uppercase transition-colors hover:bg-canvas hover:text-background"
                 >
                   PORTFOLIO
                 </Link>
               </li>
             </ul>
           </nav>
-        </BlogContainer>
+        </div>
       </header>
 
       <Outlet />

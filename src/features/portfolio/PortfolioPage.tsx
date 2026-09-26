@@ -100,7 +100,7 @@ export function PortfolioPage({ blogPosts }: { blogPosts: PostSummary[] }) {
     <div
       className="min-h-screen overflow-x-clip bg-canvas text-ink lg:h-svh lg:overflow-hidden"
     >
-      <header className="pointer-events-none fixed inset-x-0 top-0 z-50 px-4 pt-4 lg:hidden">
+      <header className="pointer-events-none sticky top-0 z-50 px-4 pt-4 lg:hidden">
         <div className="flex items-start justify-between gap-4">
           <AppLink
             to="/"
@@ -178,7 +178,7 @@ export function PortfolioPage({ blogPosts }: { blogPosts: PostSummary[] }) {
       </div>
 
       <div
-        className={`mx-auto max-w-site transform-gpu transition-transform duration-[750ms] ease-[cubic-bezier(0.76,0,0.24,1)] lg:grid lg:h-svh lg:grid-cols-site lg:gap-2 lg:p-2 ${
+        className={`mx-auto w-full max-w-[2400px] transform-gpu transition-transform duration-[750ms] ease-[cubic-bezier(0.76,0,0.24,1)] lg:grid lg:h-svh lg:grid-cols-site lg:gap-2 lg:p-2 min-[112.5rem]:grid-cols-[minmax(0,1fr)_57.5rem_20rem] ${
           loaderState === "entering" ? "translate-y-[7svh]" : "translate-y-0"
         }`}
       >
@@ -204,7 +204,7 @@ export function PortfolioPage({ blogPosts }: { blogPosts: PostSummary[] }) {
               alt="ノートパソコンで制作するTOMOのイラスト"
               width={1536}
               height={1024}
-              className="absolute inset-0 size-full object-cover object-center"
+              className="absolute inset-0 size-full object-cover object-center min-[112.5rem]:mx-auto min-[112.5rem]:max-w-[calc((100svh-1rem)*1.5)]"
             />
           </picture>
         </aside>
